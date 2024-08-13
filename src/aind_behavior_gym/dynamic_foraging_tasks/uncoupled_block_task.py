@@ -6,7 +6,6 @@ see /test/test_uncoupled_block_task.py for usage
 
 import logging
 
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -31,7 +30,8 @@ class UncoupledBlockTask(DynamicBanditTask):
         block_max=35,
         persev_add=True,
         perseverative_limit=4,
-        max_block_tally=4,  # Max number of consecutive blocks in which one side has higher rwd prob than the other
+        max_block_tally=4,  # Max number of consecutive blocks in
+        # which one side has higher rwd prob than the other
     ) -> None:
 
         self.__dict__.update(locals())
@@ -159,7 +159,10 @@ class UncoupledBlockTask(DynamicBanditTask):
                 if (
                     self.rwd_tally[side] >= self.max_block_tally
                 ):  # Only check higher-in-a-row for this side
-                    msg = f"--- {self.trial}: {side} is higher for {self.rwd_tally[side]} eff_blocks, force {side} to lowest ---\n"
+                    msg = (
+                        f"--- {self.trial}: {side} is higher for {self.rwd_tally[side]} "
+                        f"eff_blocks, force {side} to lowest ---\n"
+                    )
                     logger.info(msg)
                     self.block_rwd_prob[side].append(min(self.rwd_prob_array))
                     self.rwd_tally[side] = self.rwd_tally[other_side] = 0
@@ -170,7 +173,8 @@ class UncoupledBlockTask(DynamicBanditTask):
                 self.block_rwd_prob[side].append(self.rng.choice(self.rwd_prob_array))
 
             # Don't repeat the previous rwd prob
-            # (this will not mess up with the "forced" case since the previous block cannot be the lowest prob in the first place)
+            # (this will not mess up with the "forced" case since the previous block cannot be
+            # the lowest prob in the first place)
             while self.block_rwd_prob[side][-2] == self.block_rwd_prob[side][-1]:
                 self.block_rwd_prob[side][-1] = self.rng.choice(self.rwd_prob_array)
 

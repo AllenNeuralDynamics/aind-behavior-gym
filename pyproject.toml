@@ -55,6 +55,7 @@ exclude = '''
     | _build
     | build
     | dist
+    | code
   )/
   | .gitignore
 )

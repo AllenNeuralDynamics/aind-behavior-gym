@@ -1,8 +1,4 @@
 """Define the base model for foraging task that interacts with the gymnasium environment
-"""
-
-"""Couple block task for dynamic bandit environment
-This is very close to the task used in mice training.
 
 First coded by Han for the project in Neuromatch Academy: Deep Learning
 https://github.com/hanhou/meta_rl/blob/bd9b5b1d6eb93d217563ff37608aaa2f572c08e6/han/environment/dynamic_bandit_env.py

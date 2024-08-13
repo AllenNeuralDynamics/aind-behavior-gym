@@ -1,8 +1,6 @@
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-# matplotlib.use('Qt5Agg')
 
 #  np.random.seed(56)
 
@@ -24,13 +22,13 @@ class RandomWalkReward:
 
         self.__dict__.update(locals())
 
-        if not type(sigma) == list:
+        if not isinstance(sigma, list):
             sigma = [sigma, sigma]  # Backward compatibility
 
-        if not type(p_min) == list:
+        if not isinstance(p_min, list):
             p_min = [p_min, p_min]  # Backward compatibility
 
-        if not type(p_max) == list:
+        if not isinstance(p_max, list):
             p_max = [p_max, p_max]  # Backward compatibility
 
         self.p_min, self.p_max, self.sigma, self.mean = p_min, p_max, sigma, mean
@@ -65,7 +63,7 @@ class RandomWalkReward:
         var = np.var(data)
         # Normalized data
         ndata = data - mean
-        acorr = np.correlate(ndata, ndata, "full")[len(ndata) - 1 :]
+        acorr = np.correlate(ndata, ndata, "full")[len(ndata) - 1 :]  # noqa E203
         acorr = acorr / var / len(ndata)
         return acorr
 

@@ -2,9 +2,8 @@ import unittest
 
 import numpy as np
 
-from aind_behavior_gym.dynamic_foraging_tasks.coupled_block_task import CoupledBlockTask
 from aind_behavior_gym.dynamic_foraging_tasks.uncoupled_block_task import UncoupledBlockTask
-from aind_behavior_gym.gym_env.dynamic_bandit_env import IGNORE, DynamicBanditEnv, L, R
+from aind_behavior_gym.gym_env.dynamic_bandit_env import DynamicBanditEnv, L, R
 
 
 class TestDynamicBanditEnv(unittest.TestCase):
@@ -18,7 +17,8 @@ class TestDynamicBanditEnv(unittest.TestCase):
             block_max=35,
             persev_add=True,
             perseverative_limit=4,
-            max_block_tally=4,  # Max number of consecutive blocks in which one side has higher rwd prob than the other
+            max_block_tally=4,  # Max number of consecutive blocks in which one side has higher
+            # rwd prob than the other
         )
 
         self.env = DynamicBanditEnv(self.task, num_arms=2, allow_ignore=True, num_trials=1000)
@@ -43,7 +43,7 @@ class TestDynamicBanditEnv(unittest.TestCase):
             done = terminated or truncated
 
             # Move to the next observation
-            observation = next_observation
+            observation = next_observation  # noqa F841
 
             actions.append(action)
             rewards.append(reward)

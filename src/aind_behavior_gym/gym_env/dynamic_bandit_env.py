@@ -19,7 +19,9 @@ class DynamicBanditEnv(gym.Env):
     """
     A general gymnasium environment for dynamic bandit task
 
-    - To use the environment, you need to define a task object that determines the dynamics of reward contingencies.
+    - To use the environment, you need to define a task object that determines
+      the dynamics of reward contingencies.
+
         For example:
 
         from dynamic_foraging_tasks.coupled_block_task import CoupledBlockTask
@@ -46,11 +48,12 @@ class DynamicBanditEnv(gym.Env):
 
     ---
     task:
-        A task object (like CoupledBlockTask) that defines the dynamics of reward contingencies in the environment.
+        A task object (like CoupledBlockTask) that defines the dynamics of reward contingencies
+        in the environment.
     num_trials:
         Number of trials in the session
 
-    Adapted from https://github.com/thinkjrs/gym-bandit-environments/blob/master/gym_bandits/bandit.py
+    Adapted from https://github.com/thinkjrs/gym-bandit-environments/blob/master/gym_bandits/bandit.py  # noqa E501
     """
 
     def __init__(
@@ -149,7 +152,7 @@ class DynamicBanditEnvHistoryAsState(DynamicBanditEnv):
     """Use history as state
 
     self._get_obs() returns a tuple containing the recent history
-    [action(t), reward(t), action(t-1), reward(t-1), ..., action(t - history_length + 1), reward(t - history_length + 1)]
+    [action(t), reward(t), action(t-1), reward(t-1), ..., action(t - history_length + 1), reward(t - history_length + 1)]  # noqa E501
 
     This will be the input to the DQN as "state"
     """
@@ -159,7 +162,8 @@ class DynamicBanditEnvHistoryAsState(DynamicBanditEnv):
         self.history_length = history_length
         self.history = []
 
-        # Define the observation space based on the history length and the original observation space
+        # Define the observation space based on the history length and the
+        # original observation space
         self.observation_space = spaces.Box(
             low=0, high=self.num_trials, shape=(history_length * 2,), dtype=np.float32
         )
@@ -170,7 +174,7 @@ class DynamicBanditEnvHistoryAsState(DynamicBanditEnv):
             padding = [(0, 0)] * (self.history_length - len(self.history))
             history = self.history[::-1] + padding
         else:
-            history = self.history[-self.history_length :][::-1]
+            history = self.history[-self.history_length :][::-1]  # noqa E203
         return np.array(history, dtype=np.float32).flatten()
 
     def reset(self, seed=None, options={}):

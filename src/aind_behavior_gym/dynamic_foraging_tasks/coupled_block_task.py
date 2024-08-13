@@ -6,7 +6,9 @@ https://github.com/hanhou/meta_rl/blob/bd9b5b1d6eb93d217563ff37608aaa2f572c08e6/
 """
 
 import numpy as np
+
 from .base import DynamicBanditTask
+
 
 class CoupledBlockTask(DynamicBanditTask):
     """
@@ -18,32 +20,33 @@ class CoupledBlockTask(DynamicBanditTask):
     This default setting roughly matches what has been used in this paper:
     https://www.sciencedirect.com/science/article/pii/S089662731930529X
     """
+
     def __init__(
         self,
         block_min=40,  # Min block length
-        block_max=80,   # Max block length
-        block_beta=20,   # Time constant of the exponential distribution (the larger the flatter)
+        block_max=80,  # Max block length
+        block_beta=20,  # Time constant of the exponential distribution (the larger the flatter)
         p_reward_pairs=[
             [0.225, 0.225],  # 1:1
-            [0.45/4*1, 0.45/4*3],  # 1:3
-            [0.45/7*1, 0.45/7*6],  # 1:6
-            [0.05, 0.40], # 1:8
+            [0.45 / 4 * 1, 0.45 / 4 * 3],  # 1:3
+            [0.45 / 7 * 1, 0.45 / 7 * 6],  # 1:6
+            [0.05, 0.40],  # 1:8
         ],
     ):
         self.block_min = block_min
         self.block_max = block_max
         self.block_beta = block_beta
-        self.p_reward_pairs = [sorted(ps) for ps in p_reward_pairs] # Always sort the input ps
+        self.p_reward_pairs = [sorted(ps) for ps in p_reward_pairs]  # Always sort the input ps
 
     def reset(self, seed=None):
-        super().reset(seed=seed) # Set self.rng
-        
+        super().reset(seed=seed)  # Set self.rng
+
         # Initialization
         self.trial_p_reward = []  # Rwd prob per trial
         self.block_starts = [0]  # Start of each block. The first block always starts at trial 0
         self.block_lens = []  # Lengths of each block
         self.block_p_reward = []  # Rwd prob of each block
-        
+
         self.trial = -1  # Index of trial number, starting from 0
         self.next_trial()
 
@@ -54,8 +57,7 @@ class CoupledBlockTask(DynamicBanditTask):
         I'm doing this trial-by-trial because the block switch may depend on the action.
         """
         # Start a new block if necessary
-        if (self.trial == -1
-            or self.trial == self.block_starts[-1]):
+        if self.trial == -1 or self.trial == self.block_starts[-1]:
             self._next_block()
 
         # Generate reward probabilities for this trial
@@ -72,11 +74,13 @@ class CoupledBlockTask(DynamicBanditTask):
         self.block_lens.append(
             int(
                 generate_trunc_exp(
-                    self.block_min, self.block_max, self.block_beta,
+                    self.block_min,
+                    self.block_max,
+                    self.block_beta,
                     rng=self.rng,
-                    )[0]
-               )
+                )[0]
             )
+        )
         self.block_starts.append(self.block_starts[-1] + self.block_lens[-1])
 
         # Generate the reward probability
@@ -105,10 +109,8 @@ class CoupledBlockTask(DynamicBanditTask):
             p_reward = self.rng.choice(valid_pairs)
             # If there is a block before the equal-probability block, flip relative to it
             # otherwise, randomly choose
-            p_reward = self._flip_side(p_reward,
-                                       self.block_p_reward[-2]
-                                       if len(self.block_p_reward) > 1
-                                       else None
+            p_reward = self._flip_side(
+                p_reward, self.block_p_reward[-2] if len(self.block_p_reward) > 1 else None
             )
         else:
             # Randomly choose from any pairs
@@ -136,7 +138,7 @@ def generate_trunc_exp(lower, upper, beta, n=1, rng=None):
     """
     if rng is None:
         rng = np.random.default_rng()
-        
+
     x = lower + rng.exponential(beta, n)
     x[x > upper] = upper
     return x

@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from aind_dynamic_foraging_models.generative_model.dynamic_foraging_tasks.uncoupled_block_task import (
+from aind_behavior_gym.dynamic_foraging_tasks.uncoupled_block_task import (
     UncoupledBlockTask, L, R, IGNORE
     )
 
@@ -32,7 +32,7 @@ class TestUncoupledBlockTask(unittest.TestCase):
 
         # Call plot function and check it runs without error
         fig = self.reward_schedule.plot_reward_schedule()
-        fig.savefig("test_uncoupled_block_task.png")
+        fig.savefig("tests/results/test_uncoupled_block_task.png")
         self.assertIsNotNone(fig)  # Ensure the figure is created
 
         # Assertions to verify the behavior of block ends

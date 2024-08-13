@@ -1,9 +1,9 @@
 import unittest
 import numpy as np
 
-from aind_dynamic_foraging_models.generative_model.gym_env.dynamic_bandit_env import (DynamicBanditEnv, L, R, IGNORE)
-from aind_dynamic_foraging_models.generative_model.dynamic_foraging_tasks.coupled_block_task import CoupledBlockTask
-from aind_dynamic_foraging_models.generative_model.dynamic_foraging_tasks.uncoupled_block_task import UncoupledBlockTask
+from aind_behavior_gym.gym_env.dynamic_bandit_env import (DynamicBanditEnv, L, R, IGNORE)
+from aind_behavior_gym.dynamic_foraging_tasks.coupled_block_task import CoupledBlockTask
+from aind_behavior_gym.dynamic_foraging_tasks.uncoupled_block_task import UncoupledBlockTask
 
 
 class TestDynamicBanditEnv(unittest.TestCase):

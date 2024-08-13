@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from aind_behavior_gym.gym_env.dynamic_bandit_env import L, R
+from aind_behavior_gym.gym_env.dynamic_bandit_env import L, R, IGNORE
 from aind_behavior_gym.dynamic_foraging_tasks.base import DynamicBanditTask
 
 class RandomWalkTask(DynamicBanditTask):
@@ -97,20 +97,4 @@ def auto_corr(data):
     acorr = acorr / var / len(ndata)
     return acorr
 
-if __name__ == "__main__":
-    total_trial = 1000
-
-    reward_schedule = RandomWalkTask(
-        p_min=[0.1, 0.1], p_max=0.9, sigma=[0.1, 0.1], mean=[-0.0, 0.0]
-    )
-    reward_schedule.reset(seed=42)
-
-    while reward_schedule.trial <= total_trial:
-        reward_schedule.next_trial()
-        """
-        run protocol here
-        """
-
-    fig = reward_schedule.plot_reward_schedule()
-    fig.savefig("random_walk.png")
 

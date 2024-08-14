@@ -1,14 +1,17 @@
 """A general gymnasium environment for dynamic foraging tasks in AIND.
 
-First coded by Han for the project in Neuromatch Academy: Deep Learning
+Adapted from Han's code for the project in Neuromatch Academy: Deep Learning
 https://github.com/hanhou/meta_rl/blob/bd9b5b1d6eb93d217563ff37608aaa2f572c08e6/han/environment/dynamic_bandit_env.py
+
+See also Po-Chen Kuo's implementation:
+https://github.com/pckuo/meta_rl/blob/main/environments/bandit/bandit.py
 """
 
 import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
 
-from aind_behavior_gym.dynamic_foraging_tasks.base import DynamicBanditTask
+from aind_behavior_gym.task.base import DynamicBanditTask
 
 L = 0
 R = 1

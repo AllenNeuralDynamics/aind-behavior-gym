@@ -3,7 +3,7 @@
 import unittest
 import numpy as np
 
-from aind_behavior_gym.dynamic_foraging_tasks.coupled_block_task import CoupledBlockTask
+from aind_behavior_gym.task.coupled_block_task import CoupledBlockTask
 from aind_behavior_gym.gym_env.dynamic_bandit_env import DynamicBanditEnv
 from aind_behavior_gym.gym_env.dynamic_bandit_env import L, R
 

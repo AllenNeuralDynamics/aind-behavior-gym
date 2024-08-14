@@ -77,7 +77,10 @@ fail_under = 80
 [tool.isort]
 line_length = 100
 profile = "black"
+skip = [
+    "code/",
+]
 
 [tool.interrogate]
-exclude = ["setup.py", "docs", "build"]
+exclude = ["setup.py", "docs", "build", "code"]
 fail-under = 80

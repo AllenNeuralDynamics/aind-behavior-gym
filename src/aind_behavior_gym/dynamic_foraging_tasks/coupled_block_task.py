@@ -7,7 +7,7 @@ https://github.com/hanhou/meta_rl/blob/bd9b5b1d6eb93d217563ff37608aaa2f572c08e6/
 
 import numpy as np
 
-from .base import DynamicBanditTask
+from aind_behavior_gym.dynamic_foraging_tasks.base import DynamicBanditTask
 
 
 class CoupledBlockTask(DynamicBanditTask):

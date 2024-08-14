@@ -9,8 +9,8 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..gym_env.dynamic_bandit_env import IGNORE, L, R
-from .base import DynamicBanditTask
+from aind_behavior_gym.dynamic_foraging_tasks.base import DynamicBanditTask
+from aind_behavior_gym.gym_env.dynamic_bandit_env import IGNORE, L, R
 
 logger = logging.getLogger(__name__)
 

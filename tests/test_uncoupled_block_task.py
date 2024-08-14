@@ -4,12 +4,8 @@ import unittest
 
 import numpy as np
 
-from aind_behavior_gym.dynamic_foraging_tasks.uncoupled_block_task import (
-    IGNORE,
-    L,
-    R,
-    UncoupledBlockTask,
-)
+from aind_behavior_gym.dynamic_foraging_tasks.uncoupled_block_task import UncoupledBlockTask
+from aind_behavior_gym.gym_env.dynamic_bandit_env import IGNORE, L, R
 
 
 class TestUncoupledBlockTask(unittest.TestCase):

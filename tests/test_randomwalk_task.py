@@ -5,7 +5,8 @@ import unittest
 
 import numpy as np
 
-from aind_behavior_gym.dynamic_foraging_tasks.random_walk_task import RandomWalkTask, L, R
+from aind_behavior_gym.dynamic_foraging_tasks.random_walk_task import RandomWalkTask
+from aind_behavior_gym.gym_env.dynamic_bandit_env import L
 
 
 class TestRandomWalkTask(unittest.TestCase):

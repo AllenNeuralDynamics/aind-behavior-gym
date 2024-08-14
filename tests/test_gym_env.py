@@ -1,4 +1,5 @@
 """Test the dynamic bandit environment with a random agent performing an uncoupled block task"""
+
 import unittest
 
 import numpy as np
@@ -8,10 +9,10 @@ from aind_behavior_gym.gym_env.dynamic_bandit_env import DynamicBanditEnv, L, R
 
 
 class TestDynamicBanditEnv(unittest.TestCase):
-    """Test the dynamic bandit environment with a random agent 
+    """Test the dynamic bandit environment with a random agent
     performing an uncoupled block task
     """
-    
+
     def setUp(self):
         """Set up the environment and task"""
         np.random.seed(56)

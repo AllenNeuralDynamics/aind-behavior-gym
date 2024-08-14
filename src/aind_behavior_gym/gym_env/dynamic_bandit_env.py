@@ -8,7 +8,7 @@ import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
 
-from ..dynamic_foraging_tasks.base import DynamicBanditTask
+from aind_behavior_gym.dynamic_foraging_tasks.base import DynamicBanditTask
 
 L = 0
 R = 1

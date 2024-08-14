@@ -20,7 +20,28 @@ class UncoupledBlockTask(DynamicBanditTask):
     Generate uncoupled block reward schedule
     (by on-line updating)
 
-    adapted from Cohen lab's Arduino code (with some bug fixes?)
+    adapted from Cohen lab's Arduino code (with some bug fixes)
+    https://github.com/JeremiahYCohenLab/arduinoLibraries/blob/master/libraries/task_operantMatchingDecoupledBait/task_operantMatchingDecoupledBait.cpp  # noqa E501
+
+    See Grossman et al. 2022:
+
+    In the final stage of the task, the reward probabilities assigned to each lick spout were drawn
+    pseudorandomly from the set {0.1, 0.5, 0.9} in all the mice from the behavior experiments (n=46),
+    all the mice from the DREADDs experiments (n=10), and half of the mice from the electrophysiology
+    experiments (n=2). The other half of mice from the electrophysiology experiments (n=2) were run
+    on a version of the task with probabilities drawn from the set {0.1, 0.4, 0.7}. The probabilities
+    were assigned to each spout individually with block lengths drawn from a uniform distribution
+    of 20–35 trials. To stagger the blocks of probability assignment for each spout, the block length
+    for one spout in the first block of each session was drawn from a uniform distribution of 6–21
+    trials. For each spout, probability assignments could not be repeated across consecutive blocks.
+    To maintain task engagement, reward probabilities of 0.1 could not be simultaneously assigned
+    to both spouts. If one spout was assigned a reward probability greater than or equal to the reward
+    probability of the other spout for 3 consecutive blocks, the probability of that spout was set to
+    0.1 to encourage switching behavior and limit the creation of a direction bias. If a mouse
+    perseverated on a spout with a reward probability of 0.1 for 4 consecutive trials, 4 trials were
+    added to the length of both blocks. This procedure was implemented to keep mice from choosing
+    one spout until the reward probability became high again.
+
     """
 
     def __init__(
@@ -30,14 +51,14 @@ class UncoupledBlockTask(DynamicBanditTask):
         block_max=35,
         persev_add=True,
         perseverative_limit=4,
-        max_block_tally=4,  # Max number of consecutive blocks in
-        # which one side has higher rwd prob than the other
+        max_block_tally=4,  # Max number of consecutive blocks in which one side is better
     ) -> None:
-
+        """Init"""
         self.__dict__.update(locals())
         self.block_stagger = int((round(block_max - block_min - 0.5) / 2 + block_min) / 2)
 
     def reset(self, seed=None):
+        """Reset the task with seed. Overwrite the base class method."""
         super().reset(seed=seed)  # Reset self.rng
 
         self.rwd_tally = [0, 0]  # List for 'L' and 'R'
@@ -68,6 +89,7 @@ class UncoupledBlockTask(DynamicBanditTask):
         self.next_trial()
 
     def next_trial(self):
+        """Generate a new trial. Overwrite the base class method."""
         msg = ""
         self.trial += 1  # Starts from 0; initialized from -1
 
@@ -112,6 +134,7 @@ class UncoupledBlockTask(DynamicBanditTask):
         ), msg
 
     def generate_first_block(self):
+        """Generate the first block. Note the stagger is applied."""
         for side in [L, R]:
             self.generate_next_block(side)
 
@@ -128,6 +151,7 @@ class UncoupledBlockTask(DynamicBanditTask):
         self.block_effective_ind = 1  # Effective block ind
 
     def generate_next_block(self, side, check_higher_in_a_row=True, check_both_lowest=True):
+        """Generate the next block for both sides (yes, very complicated logic...)"""
         msg = ""
         other_side = R if side == L else L
         random_block_len = self.rng.integers(low=self.block_min, high=self.block_max + 1)
@@ -202,6 +226,14 @@ class UncoupledBlockTask(DynamicBanditTask):
         return msg
 
     def auto_shape_perseverance(self):
+        """Anti-perseverance mechanism
+
+        See Grossman et al. 2022:
+
+        If a mouse perseverated on a spout with reward probability of 0.1 for 4 consecutive trials,
+        4 trials were added to the length of both blocks. This procedure was implemented to keep
+        mice from choosing one spout until the reward probability became high again.
+        """
         msg = ""
         for s in [L, R]:
             if self.choice_history[-1] == s:
@@ -226,12 +258,15 @@ class UncoupledBlockTask(DynamicBanditTask):
         return msg
 
     def add_action(self, this_choice):
+        """Overwrite the base class method"""
         self.choice_history.append(this_choice)
 
     def plot_reward_schedule(self):
+        """Plot the reward schedule with annotations showing forced block switches"""
         fig, ax = plt.subplots(2, 1, figsize=[15, 7], sharex="col")
 
         def annotate_block(ax):
+            """Annotate block switches with special handling"""
             for s, col in zip([L, R], ["r", "b"]):
                 [
                     ax.axvline(x + (0.1 if s == R else 0), 0, 1, color=col, ls="--", lw=0.5)

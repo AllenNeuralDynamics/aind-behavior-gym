@@ -63,6 +63,7 @@ class DynamicBanditEnv(gym.Env):
         allow_ignore: bool = False,  # Allow the agent to ignore the task
         num_trials: int = 1000,  # Number of trials in the session
     ):
+        """Init"""
         self.task = task
         self.num_trials = num_trials
         self.allow_ignore = allow_ignore
@@ -80,6 +81,7 @@ class DynamicBanditEnv(gym.Env):
         self.action_space = spaces.Discrete(num_actions)
 
     def _get_obs(self):
+        """Return the observation"""
         return {"trial": self.task.trial}
 
     def _get_info(self):
@@ -158,6 +160,7 @@ class DynamicBanditEnvHistoryAsState(DynamicBanditEnv):
     """
 
     def __init__(self, task, num_trials=1000, history_length=50):
+        """Override the init method to add history_length"""
         super().__init__(task, num_trials)
         self.history_length = history_length
         self.history = []
@@ -169,7 +172,7 @@ class DynamicBanditEnvHistoryAsState(DynamicBanditEnv):
         )
 
     def _get_obs(self):
-        # Flatten the history into a single vector like []
+        """Flatten the history into a single vector and return it as the observation"""
         if len(self.history) < self.history_length:
             padding = [(0, 0)] * (self.history_length - len(self.history))
             history = self.history[::-1] + padding
@@ -178,17 +181,21 @@ class DynamicBanditEnvHistoryAsState(DynamicBanditEnv):
         return np.array(history, dtype=np.float32).flatten()
 
     def reset(self, seed=None, options={}):
+        """Override the reset method to initialize the history"""
         observation, info = super().reset(seed=seed, options=options)
         self.history = [(0, 0)] * self.history_length  # Initialize with zeros
         return self._get_obs(), info
 
     def step(self, action):
+        """Override the step method to update the history"""
         observation, reward, terminated, truncated, info = super().step(action)
         self.history.append((action, reward))
         return self._get_obs(), reward, terminated, truncated, info
 
     def render(self, mode="human"):
+        """Trivial render method"""
         return super().render(mode)
 
     def close(self):
+        """Trivial close method"""
         return super().close()

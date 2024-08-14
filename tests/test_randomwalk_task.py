@@ -1,3 +1,6 @@
+"""Test the RandomWalkTask by itself
+"""
+
 import unittest
 
 import numpy as np
@@ -9,6 +12,7 @@ class TestRandomWalkTask(unittest.TestCase):
     """Test the RandomWalkTask by itself"""
 
     def setUp(self):
+        """Set up the environment and task"""
         self.total_trial = 1000
         self.reward_schedule = RandomWalkTask(
             p_min=[0.1, 0.1],  # The lower bound of p_L and p_R
@@ -19,7 +23,7 @@ class TestRandomWalkTask(unittest.TestCase):
         self.reward_schedule.reset(seed=42)  # Already includes a next_trial()
 
     def test_reward_schedule(self):
-
+        """Test the reward schedule"""
         while self.reward_schedule.trial < self.total_trial:
             # Replace this with the actual choice
             choice = L  # Irrelevant for random walk

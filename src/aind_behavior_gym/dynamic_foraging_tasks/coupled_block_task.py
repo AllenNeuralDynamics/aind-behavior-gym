@@ -33,12 +33,14 @@ class CoupledBlockTask(DynamicBanditTask):
             [0.05, 0.40],  # 1:8
         ],
     ):
+        """Init"""
         self.block_min = block_min
         self.block_max = block_max
         self.block_beta = block_beta
         self.p_reward_pairs = [sorted(ps) for ps in p_reward_pairs]  # Always sort the input ps
 
     def reset(self, seed=None):
+        """Reset the task with seed."""
         super().reset(seed=seed)  # Set self.rng
 
         # Initialization

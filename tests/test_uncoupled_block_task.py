@@ -1,3 +1,5 @@
+"""Test the UncoupledBlockTask by itself"""
+
 import unittest
 
 import numpy as np
@@ -14,12 +16,13 @@ class TestUncoupledBlockTask(unittest.TestCase):
     """Test the UncoupledBlockTask by itself"""
 
     def setUp(self):
+        """Set up the environment and task"""
         self.total_trial = 1000
         self.reward_schedule = UncoupledBlockTask(perseverative_limit=4)
         self.reward_schedule.reset(seed=42)  # Already includes a next_trial()
 
     def test_reward_schedule(self):
-
+        """Test the reward schedule"""
         rng_agent = np.random.default_rng(seed=42)  # Another independent random number generator
 
         while self.reward_schedule.trial < self.total_trial:

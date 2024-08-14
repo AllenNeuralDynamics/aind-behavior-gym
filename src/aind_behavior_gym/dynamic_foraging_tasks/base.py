@@ -11,10 +11,11 @@ class DynamicBanditTask:
     """A general task object for dynamic bandit environment"""
 
     def __init__(self):
+        """Any initialization code"""
         pass
 
     def reset(self, seed=None):
-        """Initialization
+        """Reset the task with seed
 
         Following lines are mandatory
 

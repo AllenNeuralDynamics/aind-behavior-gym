@@ -32,9 +32,6 @@ class TestCoupledBlockTask(unittest.TestCase):
             next_observation, reward, terminated, truncated, info = self.env.step(action)
             done = terminated or truncated
 
-            # Move to the next observation
-            observation = next_observation
-
             actions.append(action)
             rewards.append(reward)
 

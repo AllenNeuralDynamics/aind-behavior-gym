@@ -8,7 +8,7 @@ from aind_behavior_gym.dynamic_foraging_tasks.uncoupled_block_task import Uncoup
 from aind_behavior_gym.gym_env.dynamic_bandit_env import DynamicBanditEnv, L, R
 
 
-class TestDynamicBanditEnv(unittest.TestCase):
+class TestUncoupledTask(unittest.TestCase):
     """Test the dynamic bandit environment with a random agent
     performing an uncoupled block task
     """

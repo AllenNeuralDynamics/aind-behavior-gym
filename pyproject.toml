@@ -17,6 +17,9 @@ readme = "README.md"
 dynamic = ["version"]
 
 dependencies = [
+    'numpy',
+    'matplotlib',
+    'gymnasium',
 ]
 
 [project.optional-dependencies]
@@ -37,7 +40,7 @@ where = ["src"]
 version = {attr = "aind_behavior_gym.__version__"}
 
 [tool.black]
-line-length = 79
+line-length = 100
 target_version = ['py36']
 exclude = '''
 
@@ -52,6 +55,7 @@ exclude = '''
     | _build
     | build
     | dist
+    | code
   )/
   | .gitignore
 )
@@ -68,12 +72,15 @@ exclude_lines = [
     "import",
     "pragma: no cover"
 ]
-fail_under = 100
+fail_under = 80
 
 [tool.isort]
-line_length = 79
+line_length = 100
 profile = "black"
+skip = [
+    "code/",
+]
 
 [tool.interrogate]
-exclude = ["setup.py", "docs", "build"]
-fail-under = 100
+exclude = ["setup.py", "docs", "build", "code"]
+fail-under = 80

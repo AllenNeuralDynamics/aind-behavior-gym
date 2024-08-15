@@ -27,13 +27,16 @@ class DynamicForagingTaskBase(gym.Env):
 
     def __init__(
         self,
-        num_arms: int = 2,  # Number of arms in the bandit
+        reward_baited: bool = False,  # Whether the reward is baited
         allow_ignore: bool = False,  # Allow the agent to ignore the task
+        num_arms: int = 2,  # Number of arms in the bandit
         num_trials: int = 1000,  # Number of trials in the session
         seed=None,
     ):
         """Init"""
         self.num_trials = num_trials
+        self.reward_baited = reward_baited
+        self.num_arms = num_arms
         self.allow_ignore = allow_ignore
 
         # State space
@@ -60,12 +63,12 @@ class DynamicForagingTaskBase(gym.Env):
         handled in the wrapper.
         """
         # Some mandatory initialization for any dynamic foraging task
-        self.trial = -1
-        self.trial_p_reward = []
-        self.actions = []
-        self.rewards = []
+        self.trial = 0
+        self.trial_p_reward = np.empty((self.num_trials, self.num_arms))
+        self.actions = np.empty(self.num_trials, dtype=int)
+        self.rewards = np.empty(self.num_trials)
         
-        self.generate_next_trial()  # Generate next p_reward
+        self.generate_new_trial()  # Generate next p_reward
 
         return self._get_obs(), self._get_info()
 
@@ -77,18 +80,19 @@ class DynamicForagingTaskBase(gym.Env):
         """
         # Action should be type integer in [0, k_bandits-1]
         assert self.action_space.contains(action)
-        self.actions.append(action)
+        self.actions[self.trial] = action
 
         # Generate reward
         reward = self.generate_reward(action)
-        self.rewards.append(reward)
+        self.rewards[self.trial] = reward
         
         # Decide termination before trial += 1
         terminated = bool((self.trial == self.num_trials - 1))  # self.trial starts from 0
 
         # State transition if not terminated (trial += 1 here)
         if not terminated:
-            self.generate_next_trial()
+            self.trial += 1  # tick time here
+            self.generate_new_trial()
 
         return self._get_obs(), reward, terminated, False, self._get_info()
     
@@ -98,16 +102,12 @@ class DynamicForagingTaskBase(gym.Env):
         reward = 0
         ignored = self.allow_ignore and action == self.action_space.n - 1
 
-        if not ignored and self.rng.uniform(0, 1) < self.trial_p_reward[-1][action]:
+        if not ignored and self.rng.uniform(0, 1) < self.trial_p_reward[self.trial, action]:
             reward = 1
         return reward
     
-    def generate_next_trial(self):
-        """Generate a new trial and increment the trial number
-
-        # Following lines are mandatory in the overridden method
-        self.trial_p_reward.append(...)
-        self.trial += 1
+    def generate_new_trial(self):
+        """Generate p_reward for a new trial
         """
         raise NotImplementedError("generate_next_trial() should be overridden by subclasses")
     
@@ -115,22 +115,22 @@ class DynamicForagingTaskBase(gym.Env):
         """Return the history of actions in format that is compatible with other library such as
         aind_dynamic_foraging_basic_analysis
         """
-        actions = np.array(self.actions).astype(float)
+        actions = self.actions.astype(float)
         if self.allow_ignore:
             actions[actions == self.action_space.n - 1] = np.nan
-        return np.array(actions)
+        return actions
     
     def get_reward_history(self):
         """Return the history of rewards in format that is compatible with other library such as
         aind_dynamic_foraging_basic_analysis
         """
-        return np.array(self.rewards)
+        return self.rewards
     
     def get_p_reward(self):
         """Return the reward probabilities for each arm in each trial which is compatible with
         other library such as aind_dynamic_foraging_basic_analysis
         """
-        return np.array(self.trial_p_reward).T
+        return self.trial_p_reward.T
 
     def _get_obs(self):
         """Return the observation"""

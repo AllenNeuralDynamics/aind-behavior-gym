@@ -52,18 +52,16 @@ class CoupledBlockTask(DynamicForagingTaskBase):
         # Call the base class reset at the end
         return super().reset()
 
-    def generate_next_trial(self):
+    def generate_new_trial(self):
         """Override the base class method to generate the next trial for coupled block task.
         """
         # Start a new block if necessary
-        if self.trial == -1 or self.trial == self.block_starts[-1]:
+        if self.trial == 0 or self.trial == self.block_starts[-1]:
             self._next_block()
 
-        # Generate reward probabilities for this trial
-        self.trial_p_reward.append(self.block_p_reward[-1])
-        self.trial += 1
-        
-        return self.trial_p_reward[-1]
+        # Append the current block's reward probability
+        self.trial_p_reward[self.trial, :] = self.block_p_reward[-1]
+        return self.trial_p_reward[-1, :]
 
     def _next_block(self):
         """

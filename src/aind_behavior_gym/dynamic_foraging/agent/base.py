@@ -16,7 +16,7 @@ class AgentBase:
     ):
         """Init"""
         self.task = task
-        self.k_arms = task.action_space.n
+        self.n_actions = task.action_space.n
         self.allow_ignore = task.allow_ignore
         
         self.rng = np.random.default_rng(seed)

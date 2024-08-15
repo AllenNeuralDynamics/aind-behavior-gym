@@ -14,38 +14,33 @@ class TestCoupledBlockTask(unittest.TestCase):
 
     def setUp(self):
         """Set up the environment and task"""
-        self.task = CoupledBlockTask()
+        self.env = CoupledBlockTask()
         self.rng = np.random.default_rng(seed=42)  # Random number generator
 
     def test_coupled_block_task(self):
         """Test the CoupledBlockTask with a random agent"""
-        observation, info = self.task.reset(seed=42)
+        observation, info = self.env.reset(seed=42)
         done = False
-        actions = []
-        rewards = []
 
         while not done:  # Trial loop
             # Randomly choose between L and R
             action = self.rng.choice([L, R])
 
             # Take the action and observe the next observation and reward
-            next_observation, reward, terminated, truncated, info = self.task.step(action)
+            next_observation, reward, terminated, truncated, info = self.env.step(action)
             done = terminated or truncated
-
-            actions.append(action)
-            rewards.append(reward)
 
         # Call plot function and check it runs without error
         fig, _ = plot_foraging_session(
-            choice_history=actions,
-            reward_history=rewards,
-            p_reward=np.array(self.task.trial_p_reward).T,
+            choice_history=self.env.get_choice_history(),
+            reward_history=self.env.get_reward_history(),
+            p_reward=self.env.get_p_reward(),
         )
         fig.savefig("tests/results/test_coupled_block_task.png")
         self.assertIsNotNone(fig)  # Ensure the figure is created
 
         self.assertEqual(
-            self.task.block_starts,
+            self.env.block_starts,
             [
                 0,
                 80,
@@ -70,13 +65,13 @@ class TestCoupledBlockTask(unittest.TestCase):
             ],
         )
         np.testing.assert_array_equal(
-            self.task.get_choice_history()[-10:], np.array([0, 1, 0, 0, 1, 1, 1, 0, 1, 1])
+            self.env.get_choice_history()[-10:], np.array([0, 1, 0, 0, 1, 1, 1, 0, 1, 1])
         )
         np.testing.assert_array_equal(
-            self.task.get_reward_history()[-10:], np.array([0, 0, 0, 0, 0, 1, 0, 0, 0, 0])
+            self.env.get_reward_history()[-10:], np.array([0, 0, 0, 0, 0, 1, 0, 0, 0, 0])
         )
         np.testing.assert_array_equal(
-            self.task.get_p_reward()[:, -10:],
+            self.env.get_p_reward()[:, -10:],
             np.array(
                 [
                     [0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05],

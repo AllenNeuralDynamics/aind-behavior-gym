@@ -56,7 +56,7 @@ class CoupledBlockTask(DynamicForagingTaskBase):
         """Override the base class method to generate the next trial for coupled block task.
         """
         # Start a new block if necessary
-        if self.trial == 0 or self.trial == self.block_starts[-1]:
+        if self.trial == self.block_starts[-1]:
             self._next_block()
 
         # Append the current block's reward probability

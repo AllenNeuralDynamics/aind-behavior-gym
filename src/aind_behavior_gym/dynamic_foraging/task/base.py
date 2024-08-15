@@ -68,7 +68,7 @@ class DynamicForagingTaskBase(gym.Env):
         self.actions = np.empty(self.num_trials, dtype=int)
         self.rewards = np.empty(self.num_trials)
         
-        self.generate_new_trial()  # Generate next p_reward
+        self.generate_new_trial()  # Generate a new p_reward for the first trial
 
         return self._get_obs(), self._get_info()
 

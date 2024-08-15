@@ -30,6 +30,7 @@ class DynamicForagingTaskBase(gym.Env):
         num_arms: int = 2,  # Number of arms in the bandit
         allow_ignore: bool = False,  # Allow the agent to ignore the task
         num_trials: int = 1000,  # Number of trials in the session
+        seed=None,
     ):
         """Init"""
         self.num_trials = num_trials
@@ -46,8 +47,11 @@ class DynamicForagingTaskBase(gym.Env):
         # Action space
         num_actions = num_arms + int(allow_ignore)  # Add the last action as ignore if allowed
         self.action_space = spaces.Discrete(num_actions)
+        
+        # Random seed
+        self.rng = np.random.default_rng(seed)
 
-    def reset(self, seed=None, options={}):
+    def reset(self, options={}):
         """
         The reset method will be called to initiate a new episode.
         You may assume that the `step` method will not be called before `reset` has been called.
@@ -55,9 +59,6 @@ class DynamicForagingTaskBase(gym.Env):
         This should *NOT* automatically reset the task! Resetting the task is
         handled in the wrapper.
         """
-        # Seed the random number generator of the env
-        self.rng = np.random.default_rng(seed)
-
         # Some mandatory initialization for any dynamic foraging task
         self.trial = -1
         self.trial_p_reward = []

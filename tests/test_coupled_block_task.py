@@ -14,12 +14,12 @@ class TestCoupledBlockTask(unittest.TestCase):
 
     def setUp(self):
         """Set up the environment and task"""
-        self.env = CoupledBlockTask()
+        self.env = CoupledBlockTask(seed=42)
         self.rng = np.random.default_rng(seed=42)  # Random number generator
 
     def test_coupled_block_task(self):
         """Test the CoupledBlockTask with a random agent"""
-        observation, info = self.env.reset(seed=42)
+        observation, info = self.env.reset()
         done = False
 
         while not done:  # Trial loop

@@ -41,7 +41,7 @@ class CoupledBlockTask(DynamicForagingTaskBase):
         self.block_beta = block_beta
         self.p_reward_pairs = [sorted(ps) for ps in p_reward_pairs]  # Always sort the input ps
 
-    def reset(self, seed=None):
+    def reset(self):
         """Reset the task with seed."""
 
         # Add more initialization specific to this task
@@ -50,7 +50,7 @@ class CoupledBlockTask(DynamicForagingTaskBase):
         self.block_p_reward = []  # Rwd prob of each block
 
         # Call the base class reset at the end
-        return super().reset(seed=seed)
+        return super().reset()
 
     def generate_next_trial(self):
         """Override the base class method to generate the next trial for coupled block task.

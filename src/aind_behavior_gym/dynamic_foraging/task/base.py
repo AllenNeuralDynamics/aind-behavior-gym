@@ -60,7 +60,10 @@ class DynamicForagingTaskBase(gym.Env):
 
         # Some mandatory initialization for any dynamic foraging task
         self.trial = -1
-        self.trial_p_reward = [] 
+        self.trial_p_reward = []
+        self.actions = []
+        self.rewards = []
+        
         self.generate_next_trial()  # Generate next p_reward
 
         return self._get_obs(), self._get_info()
@@ -73,9 +76,11 @@ class DynamicForagingTaskBase(gym.Env):
         """
         # Action should be type integer in [0, k_bandits-1]
         assert self.action_space.contains(action)
+        self.actions.append(action)
 
         # Generate reward
         reward = self.generate_reward(action)
+        self.rewards.append(reward)
         
         # Decide termination before trial += 1
         terminated = bool((self.trial == self.num_trials - 1))  # self.trial starts from 0
@@ -104,6 +109,15 @@ class DynamicForagingTaskBase(gym.Env):
         self.trial += 1
         """
         raise NotImplementedError("generate_next_trial() should be overridden by subclasses")
+    
+    def get_choice_history(self):
+        return np.array(self.actions)
+    
+    def get_reward_history(self):
+        return np.array(self.rewards)
+    
+    def get_p_reward(self):
+        return np.array(self.trial_p_reward).T
 
     def _get_obs(self):
         """Return the observation"""

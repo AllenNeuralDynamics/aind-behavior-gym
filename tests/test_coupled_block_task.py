@@ -44,7 +44,6 @@ class TestCoupledBlockTask(unittest.TestCase):
         fig.savefig("tests/results/test_coupled_block_task.png")
         self.assertIsNotNone(fig)  # Ensure the figure is created
 
-        # Assertions to verify the length of actions and rewards matches the number of trials
         self.assertEqual(
             self.task.block_starts,
             [
@@ -69,6 +68,21 @@ class TestCoupledBlockTask(unittest.TestCase):
                 974,
                 1018,
             ],
+        )
+        np.testing.assert_array_equal(
+            self.task.get_choice_history()[-10:], np.array([0, 1, 0, 0, 1, 1, 1, 0, 1, 1])
+        )
+        np.testing.assert_array_equal(
+            self.task.get_reward_history()[-10:], np.array([0, 0, 0, 0, 0, 1, 0, 0, 0, 0])
+        )
+        np.testing.assert_array_equal(
+            self.task.get_p_reward()[:, -10:],
+            np.array(
+                [
+                    [0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05],
+                    [0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4],
+                ]
+            ),
         )
 
 

@@ -7,7 +7,7 @@ https://github.com/hanhou/meta_rl/blob/bd9b5b1d6eb93d217563ff37608aaa2f572c08e6/
 
 import numpy as np
 
-from aind_behavior_gym.dynamic_foraging.task.base import DynamicForagingTaskBase
+from aind_behavior_gym.dynamic_foraging.task.base import DynamicForagingTaskBase, L, R
 
 
 class CoupledBlockTask(DynamicForagingTaskBase):
@@ -101,9 +101,9 @@ class CoupledBlockTask(DynamicForagingTaskBase):
         #    and make sure the new block is flipped compare
         #    to the one before the equal-probability block
         # 2. else, randomly choose a p_reward_pair and always flip the side
-        if self.block_p_reward[-1][0] == self.block_p_reward[-1][1]:
+        if self.block_p_reward[-1][L] == self.block_p_reward[-1][R]:
             # Cannot be p_L == p_R again
-            valid_pairs = [p for p in self.p_reward_pairs if p[0] != p[1]]
+            valid_pairs = [p for p in self.p_reward_pairs if p[L] != p[R]]
             # Randomly choose from the valid pairs
             p_reward = self.rng.choice(valid_pairs)
             # If there is a block before the equal-probability block, flip relative to it
@@ -126,7 +126,7 @@ class CoupledBlockTask(DynamicForagingTaskBase):
         """
         should_flip = p_reward_old is None and self.rng.random() < 0.5
         if p_reward_old is not None:
-            should_flip = (p_reward_new[0] < p_reward_new[1]) == (p_reward_old[0] < p_reward_old[1])
+            should_flip = (p_reward_new[L] < p_reward_new[R]) == (p_reward_old[L] < p_reward_old[R])
 
         return p_reward_new[::-1] if should_flip else p_reward_new
 

@@ -112,12 +112,24 @@ class DynamicForagingTaskBase(gym.Env):
         raise NotImplementedError("generate_next_trial() should be overridden by subclasses")
     
     def get_choice_history(self):
-        return np.array(self.actions)
+        """Return the history of actions in format that is compatible with other library such as
+        aind_dynamic_foraging_basic_analysis
+        """
+        actions = np.array(self.actions).astype(float)
+        if self.allow_ignore:
+            actions[actions == self.action_space.n - 1] = np.nan
+        return np.array(actions)
     
     def get_reward_history(self):
+        """Return the history of rewards in format that is compatible with other library such as
+        aind_dynamic_foraging_basic_analysis
+        """
         return np.array(self.rewards)
     
     def get_p_reward(self):
+        """Return the reward probabilities for each arm in each trial which is compatible with
+        other library such as aind_dynamic_foraging_basic_analysis
+        """
         return np.array(self.trial_p_reward).T
 
     def _get_obs(self):

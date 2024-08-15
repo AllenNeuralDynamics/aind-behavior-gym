@@ -9,7 +9,7 @@ class RandomAgent(AgentBase):
 
     def act(self, observation):
         """Simply random choose in the action space"""
-        return self.rng.choice([0, 1])
+        return self.rng.choice(self.k_arms)
 
     def learn(self, observation, action, reward, next_observation, done):
         """No learning for a random agent"""

@@ -15,7 +15,7 @@ class TestCoupledBlockTask(unittest.TestCase):
 
     def setUp(self):
         """Set up the environment and task"""
-        self.task = CoupledBlockTask(seed=42)
+        self.task = CoupledBlockTask(allow_ignore=False, seed=42)
         self.agent = RandomAgent(task=self.task, seed=42)
         
     def test_coupled_block_task(self):

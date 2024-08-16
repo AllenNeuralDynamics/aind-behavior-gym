@@ -9,6 +9,8 @@
 
 Implementation of AIND behavior tasks using [gymnasium](https://gymnasium.farama.org/index.html).
 
+![image](https://github.com/user-attachments/assets/5e81fc93-0726-4bc0-b1b8-ca8800fa6fa6)
+
 For the dynamic foraging tasks, the implementation is divided into two parts:
 - `task`: block structure that generates reward contingencies (`state`). The same class is used in animal training.
 - `env`: queries reward contingencies from `task` and delivers reward to the `agent`. This is like the foraging GUI in animal training.

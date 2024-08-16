@@ -9,13 +9,12 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 
-from aind_behavior_gym.dynamic_foraging_tasks.base import DynamicBanditTask
-from aind_behavior_gym.gym_env.dynamic_bandit_env import IGNORE, L, R
+from aind_behavior_gym.dynamic_foraging.task import IGNORE, DynamicForagingTaskBase, L, R
 
 logger = logging.getLogger(__name__)
 
 
-class UncoupledBlockTask(DynamicBanditTask):
+class UncoupledBlockTask(DynamicForagingTaskBase):
     """
     Generate uncoupled block reward schedule
     (by on-line updating)
@@ -52,15 +51,22 @@ class UncoupledBlockTask(DynamicBanditTask):
         persev_add=True,
         perseverative_limit=4,
         max_block_tally=4,  # Max number of consecutive blocks in which one side is better
+        **kwargs,
     ) -> None:
         """Init"""
-        self.__dict__.update(locals())
+        super().__init__(**kwargs)
+
+        self.rwd_prob_array = rwd_prob_array
+        self.block_min = block_min
+        self.block_max = block_max
+        self.persev_add = persev_add
+        self.perseverative_limit = perseverative_limit
+        self.max_block_tally = max_block_tally
+
         self.block_stagger = int((round(block_max - block_min - 0.5) / 2 + block_min) / 2)
 
     def reset(self, seed=None):
-        """Reset the task with seed. Overwrite the base class method."""
-        super().reset(seed=seed)  # Reset self.rng
-
+        """Reset the task"""
         self.rwd_tally = [0, 0]  # List for 'L' and 'R'
 
         self.block_ends = [[], []]  # List for 'L' and 'R', Trial number on which each block ends
@@ -76,22 +82,18 @@ class UncoupledBlockTask(DynamicBanditTask):
         # Anti-persev
         self.persev_consec_on_min_prob = [0, 0]  # List for 'L' and 'R'
         self.persev_add_at_trials = []
-        self.choice_history = []
 
         # Manually block hold
         self.hold_this_block = False
 
-        self.generate_first_block()
+        return super().reset()
 
-        # Mandatory for reset()
-        self.trial_p_reward = []  # [[L, R], [L, R], ...] List for 'L' and 'R', Rwd prob per trial
-        self.trial = -1  # Index of trial number, starting from 0
-        self.next_trial()
-
-    def next_trial(self):
+    def generate_new_trial(self):
         """Generate a new trial. Overwrite the base class method."""
         msg = ""
-        self.trial += 1  # Starts from 0; initialized from -1
+
+        if self.trial == 0:
+            self.generate_first_block()
 
         # Block switch?
         if not self.hold_this_block:
@@ -110,24 +112,25 @@ class UncoupledBlockTask(DynamicBanditTask):
                     )
 
         # Fill new value
-        self.trial_p_reward.append(
-            [self.block_rwd_prob[L][self.block_ind[L]], self.block_rwd_prob[R][self.block_ind[R]]]
-        )
+        self.trial_p_reward[self.trial, :] = [
+            self.block_rwd_prob[L][self.block_ind[L]],
+            self.block_rwd_prob[R][self.block_ind[R]],
+        ]
 
         # Anti-persev
-        if not self.hold_this_block and self.persev_add and len(self.choice_history):
+        if not self.hold_this_block and self.persev_add and self.trial > 0:
             msg = msg + self.auto_shape_perseverance()
         else:
             for s in [L, R]:
                 self.persev_consec_on_min_prob[s] = 0
 
-        assert (self.trial + 1) == len(self.trial_p_reward)
         assert self.block_ind[L] + 1 == len(self.block_rwd_prob[L]) == len(self.block_ends[L])
         assert self.block_ind[R] + 1 == len(self.block_rwd_prob[R]) == len(self.block_ends[R])
 
         return (
             [
-                self.trial_p_reward[-2][s] != self.trial_p_reward[-1][s] for s in [L, R]
+                self.trial_p_reward[self.trial - 1, s] != self.trial_p_reward[self.trial, s]
+                for s in [L, R]
             ]  # Whether block just switched
             if self.trial > 0
             else [0, 0]
@@ -236,11 +239,11 @@ class UncoupledBlockTask(DynamicBanditTask):
         """
         msg = ""
         for s in [L, R]:
-            if self.choice_history[-1] == s:
+            if self.actions[self.trial - 1] == s:  # Note that self.trial already increased 1
                 self.persev_consec_on_min_prob[1 - s] = (
                     0  # Reset other side as soon as there is an opposite choice
                 )
-                if self.trial_p_reward[-2][s] == min(
+                if self.trial_p_reward[self.trial - 1, s] == min(
                     self.rwd_prob_array
                 ):  # If last choice is on side with min_prob (0.1), add counter
                     self.persev_consec_on_min_prob[s] += 1
@@ -256,10 +259,6 @@ class UncoupledBlockTask(DynamicBanditTask):
                 logger.info(msg)
                 self.persev_add_at_trials.append(self.trial)
         return msg
-
-    def add_action(self, this_choice):
-        """Overwrite the base class method"""
-        self.choice_history.append(this_choice)
 
     def plot_reward_schedule(self):
         """Plot the reward schedule with annotations showing forced block switches"""
@@ -278,7 +277,7 @@ class UncoupledBlockTask(DynamicBanditTask):
             for s, col, pos, m in zip(
                 [L, R, IGNORE], ["r", "b", "k"], [0, 1, 0.95], ["|", "|", "x"]
             ):
-                this_choice = np.where(np.array(self.choice_history) == s)
+                this_choice = np.where(self.actions == s)
                 ax.plot(this_choice, [pos] * len(this_choice), m, color=col)
 
             ax.plot(
@@ -290,22 +289,15 @@ class UncoupledBlockTask(DynamicBanditTask):
             )
 
         for s, col in zip([L, R], ["r", "b"]):
-            ax[0].plot(
-                [trial[s] for trial in self.trial_p_reward], col, marker=".", alpha=0.5, lw=2
-            )
+            ax[0].plot(self.trial_p_reward[:, s], col, marker=".", alpha=0.5, lw=2)
         annotate_block(ax[0])
 
         ax[1].plot(
-            np.array([trial[L] for trial in self.trial_p_reward])
-            + np.array([trial[R] for trial in self.trial_p_reward]),
+            self.trial_p_reward.sum(axis=1),
             label="sum",
         )
         ax[1].plot(
-            np.array([trial[R] for trial in self.trial_p_reward])
-            / (
-                np.array([trial[L] for trial in self.trial_p_reward])
-                + np.array([trial[R] for trial in self.trial_p_reward])
-            ),
+            self.trial_p_reward[:, R] / self.trial_p_reward.sum(axis=1),
             label="R/(L+R)",
         )
         ax[1].legend()

@@ -5,17 +5,15 @@ First coded by Han for the project in Neuromatch Academy: Deep Learning
 https://github.com/hanhou/meta_rl/blob/bd9b5b1d6eb93d217563ff37608aaa2f572c08e6/han/environment/dynamic_bandit_env.py
 """
 
+from typing import List
+
 import numpy as np
 
-from aind_behavior_gym.dynamic_foraging_tasks.base import DynamicBanditTask
+from aind_behavior_gym.dynamic_foraging.task import DynamicForagingTaskBase, L, R
 
 
-class CoupledBlockTask(DynamicBanditTask):
-    """
-    Generate block-like reward probabilities for 2-arm non-stationary bandit environment.
-    Instead of pre-generatingµ all reward probabilities, I'm generating them on the fly.
-    This is because the reward probabilities may depend on the action, especially in
-    real animal training.
+class CoupledBlockTask(DynamicForagingTaskBase):
+    """Coupled block task for dynamic foraging
 
     This default setting roughly matches what has been used in this paper:
     https://www.sciencedirect.com/science/article/pii/S089662731930529X
@@ -23,50 +21,49 @@ class CoupledBlockTask(DynamicBanditTask):
 
     def __init__(
         self,
-        block_min=40,  # Min block length
-        block_max=80,  # Max block length
-        block_beta=20,  # Time constant of the exponential distribution (the larger the flatter)
-        p_reward_pairs=[
-            [0.225, 0.225],  # 1:1
-            [0.45 / 4 * 1, 0.45 / 4 * 3],  # 1:3
-            [0.45 / 7 * 1, 0.45 / 7 * 6],  # 1:6
-            [0.05, 0.40],  # 1:8
-        ],
+        block_min: int = 40,  # Min block length
+        block_max: int = 80,  # Max block length
+        block_beta: int = 20,  # Time constant of exponential distribution (the larger the flatter)
+        p_reward_pairs: List[List[float]] = None,  # List of reward probability pairs
+        **kwargs,
     ):
         """Init"""
+        super().__init__(**kwargs)
+
+        if p_reward_pairs is None:
+            p_reward_pairs = [
+                [0.225, 0.225],  # 1:1
+                [0.45 / 4 * 1, 0.45 / 4 * 3],  # 1:3
+                [0.45 / 7 * 1, 0.45 / 7 * 6],  # 1:6
+                [0.05, 0.40],  # 1:8
+            ]
+
         self.block_min = block_min
         self.block_max = block_max
         self.block_beta = block_beta
         self.p_reward_pairs = [sorted(ps) for ps in p_reward_pairs]  # Always sort the input ps
 
-    def reset(self, seed=None):
-        """Reset the task with seed."""
-        super().reset(seed=seed)  # Set self.rng
+    def reset(self):
+        """Reset the task"""
 
-        # Initialization
-        self.trial_p_reward = []  # Rwd prob per trial
+        # Add more initialization specific to this task
         self.block_starts = [0]  # Start of each block. The first block always starts at trial 0
         self.block_lens = []  # Lengths of each block
         self.block_p_reward = []  # Rwd prob of each block
 
-        self.trial = -1  # Index of trial number, starting from 0
-        self.next_trial()
+        # Call the base class reset at the end
+        return super().reset()
 
-    def next_trial(self):
-        """
-        Generate a new trial, return reward probability for each arm.
-
-        I'm doing this trial-by-trial because the block switch may depend on the action.
-        """
+    def generate_new_trial(self):
+        """Override the base class method to generate the next trial for coupled block task."""
         # Start a new block if necessary
-        if self.trial == -1 or self.trial == self.block_starts[-1]:
+        if self.trial == self.block_starts[-1]:
             self._next_block()
 
-        # Generate reward probabilities for this trial
-        self.trial_p_reward.append(self.block_p_reward[-1])
-        self.trial += 1
-
-        return self.trial_p_reward[-1]
+        # Append the current block's reward probability
+        # Note that self.trial already increased by 1 here
+        self.trial_p_reward[self.trial, :] = self.block_p_reward[-1]
+        return self.trial_p_reward[-1, :]
 
     def _next_block(self):
         """
@@ -104,9 +101,9 @@ class CoupledBlockTask(DynamicBanditTask):
         #    and make sure the new block is flipped compare
         #    to the one before the equal-probability block
         # 2. else, randomly choose a p_reward_pair and always flip the side
-        if self.block_p_reward[-1][0] == self.block_p_reward[-1][1]:
+        if self.block_p_reward[-1][L] == self.block_p_reward[-1][R]:
             # Cannot be p_L == p_R again
-            valid_pairs = [p for p in self.p_reward_pairs if p[0] != p[1]]
+            valid_pairs = [p for p in self.p_reward_pairs if p[L] != p[R]]
             # Randomly choose from the valid pairs
             p_reward = self.rng.choice(valid_pairs)
             # If there is a block before the equal-probability block, flip relative to it
@@ -129,7 +126,7 @@ class CoupledBlockTask(DynamicBanditTask):
         """
         should_flip = p_reward_old is None and self.rng.random() < 0.5
         if p_reward_old is not None:
-            should_flip = (p_reward_new[0] < p_reward_new[1]) == (p_reward_old[0] < p_reward_old[1])
+            should_flip = (p_reward_new[L] < p_reward_new[R]) == (p_reward_old[L] < p_reward_old[R])
 
         return p_reward_new[::-1] if should_flip else p_reward_new
 

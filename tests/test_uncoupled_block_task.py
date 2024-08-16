@@ -2,10 +2,13 @@
 
 import unittest
 
-import numpy as np
-
-from aind_behavior_gym.dynamic_foraging_tasks.uncoupled_block_task import UncoupledBlockTask
-from aind_behavior_gym.gym_env.dynamic_bandit_env import DynamicBanditEnv, L, R
+from aind_behavior_gym.dynamic_foraging.agent.random_agent import RandomAgentBiasedIgnore
+from aind_behavior_gym.dynamic_foraging.task.uncoupled_block_task import (
+    IGNORE,
+    L,
+    R,
+    UncoupledBlockTask,
+)
 
 
 class TestUncoupledTask(unittest.TestCase):
@@ -15,8 +18,6 @@ class TestUncoupledTask(unittest.TestCase):
 
     def setUp(self):
         """Set up the environment and task"""
-        np.random.seed(56)
-        self.L, self.R, self.IGNORE = 0, 1, 2
 
         self.task = UncoupledBlockTask(
             rwd_prob_array=[0.1, 0.5, 0.9],
@@ -24,67 +25,63 @@ class TestUncoupledTask(unittest.TestCase):
             block_max=35,
             persev_add=True,
             perseverative_limit=4,
-            max_block_tally=4,  # Max number of consecutive blocks in which one side has higher
-            # rwd prob than the other
+            max_block_tally=4,
+            allow_ignore=True,
+            num_trials=1000,
+            seed=42,
         )
+        self.agent = RandomAgentBiasedIgnore(seed=42)
+        self.agent.add_task(self.task)
 
-        self.env = DynamicBanditEnv(self.task, num_arms=2, allow_ignore=True, num_trials=1000)
+    def test_uncoupled_block_task(self):
+        """Test the UncoupledBlockTask with a random agent"""
+        # --- Agent performs the task ---
+        self.agent.perform()
 
-    def test_bandit_env(self):
-        """Test the dynamic bandit environment with a random agent"""
-        observation, info = self.env.reset(seed=42)
-        done = False
-        actions = []
-        rewards = []
-
-        rng_agent = np.random.default_rng(seed=42)  # Another independent random number generator
-
-        while not done:  # Trial loop
-            # Choose an action (a random agent with left bias and ignores)
-            action = [self.L, self.R, self.IGNORE][rng_agent.choice([0] * 100 + [1] * 20 + [2] * 1)]
-
-            # Can also apply block hold here (optional)
-            self.task.hold_this_block = 500 < self.task.trial < 700
-
-            # Take the action and observe the next observation and reward
-            next_observation, reward, terminated, truncated, info = self.env.step(action)
-            done = terminated or truncated
-
-            # Move to the next observation
-            observation = next_observation  # noqa F841
-
-            actions.append(action)
-            rewards.append(reward)
-
-        self.task.plot_reward_schedule()
+        # --- Assertions ---
+        # Call plot function
+        fig = self.task.plot_reward_schedule()
+        fig.savefig("tests/results/test_uncoupled_block_task.png")
+        self.assertIsNotNone(fig)  # Ensure the figure is created
 
         # Assertions to verify the behavior of block ends
         self.assertEqual(
             self.task.block_ends[L],
             [
                 21,
-                66,
-                87,
-                109,
-                143,
-                235,
-                269,
-                306,
-                331,
-                356,
+                52,
+                76,
+                102,
+                183,
+                214,
+                321,
+                349,
+                378,
                 398,
-                432,
-                457,
-                701,
-                726,
-                776,
-                807,
-                840,
-                863,
-                930,
-                961,
-                985,
-                1006,
+                418,
+                450,
+                476,
+                502,
+                527,
+                564,
+                601,
+                622,
+                653,
+                676,
+                698,
+                725,
+                751,
+                773,
+                780,
+                813,
+                836,
+                865,
+                900,
+                904,
+                928,
+                969,
+                989,
+                1007,
             ],
         )
 
@@ -92,36 +89,74 @@ class TestUncoupledTask(unittest.TestCase):
             self.task.block_ends[R],
             [
                 17,
-                67,
-                102,
-                129,
+                21,
+                62,
+                92,
                 183,
-                240,
-                269,
-                321,
-                348,
-                387,
-                426,
-                451,
-                480,
-                701,
-                726,
-                787,
-                820,
-                854,
-                924,
-                964,
-                985,
-                1018,
+                191,
+                224,
+                331,
+                366,
+                398,
+                418,
+                458,
+                476,
+                520,
+                527,
+                570,
+                597,
+                618,
+                622,
+                669,
+                693,
+                698,
+                743,
+                773,
+                796,
+                831,
+                851,
+                875,
+                904,
+                918,
+                946,
+                975,
+                989,
+                1022,
             ],
         )
 
         # Verify rewards
         self.assertEqual(
-            rewards[-25:],
-            [1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+            self.task.rewards[-25:].tolist(),
+            [
+                0.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+            ],
         )
-        self.assertEqual(np.array(rewards)[np.array(actions) == self.IGNORE].sum(), 0)
+        self.assertEqual(self.task.rewards[self.task.actions == IGNORE].sum(), 0)
 
 
 if __name__ == "__main__":

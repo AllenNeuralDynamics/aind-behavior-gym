@@ -30,7 +30,8 @@ dev = [
     'interrogate',
     'isort',
     'Sphinx',
-    'furo'
+    'furo',
+    'aind_dynamic_foraging_basic_analysis'
 ]
 
 [tool.setuptools.packages.find]

@@ -39,15 +39,13 @@ class RandomWalkTask(DynamicForagingTaskBase):
     def reset(self, seed=None):
         """Reset the task, remember to call the base class reset at the end."""
         self.hold_this_block = False
-        
+
         return super().reset()
 
     def generate_new_trial(self):
         """Generate a new trial. Overwrite the base class method."""
         # Note that self.trial already increased by 1 here
-        self.trial_p_reward[self.trial, :] = [self._generate_next_p(side) 
-                                              for side in [L, R]
-                                              ]
+        self.trial_p_reward[self.trial, :] = [self._generate_next_p(side) for side in [L, R]]
 
     def _generate_next_p(self, side):
         """Generate the p_side for the next trial."""
@@ -59,9 +57,8 @@ class RandomWalkTask(DynamicForagingTaskBase):
 
         # Else, take a random walk
         p = self.rng.normal(
-            self.trial_p_reward[self.trial - 1, side] + self.mean[side], 
-            self.sigma[side]
-            )
+            self.trial_p_reward[self.trial - 1, side] + self.mean[side], self.sigma[side]
+        )
         p = min(self.p_max[side], max(self.p_min[side], p))  # Absorb at the boundary
         return p
 

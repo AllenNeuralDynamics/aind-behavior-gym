@@ -48,7 +48,7 @@ class DynamicForagingTaskBase(gym.Env):
         # Action space
         num_actions = num_arms + int(allow_ignore)  # Add the last action as ignore if allowed
         self.action_space = spaces.Discrete(num_actions)
-        
+
         # Random seed
         self.rng = np.random.default_rng(seed)
 
@@ -65,7 +65,7 @@ class DynamicForagingTaskBase(gym.Env):
         self.trial_p_reward = np.empty((self.num_trials, self.num_arms))
         self.actions = np.empty(self.num_trials, dtype=int)
         self.rewards = np.empty(self.num_trials)
-        
+
         self.generate_new_trial()  # Generate a new p_reward for the first trial
 
         return self._get_obs(), self._get_info()
@@ -83,7 +83,7 @@ class DynamicForagingTaskBase(gym.Env):
         # Generate reward
         reward = self.generate_reward(action)
         self.rewards[self.trial] = reward
-        
+
         # Decide termination before trial += 1
         terminated = bool((self.trial == self.num_trials - 1))  # self.trial starts from 0
 
@@ -93,7 +93,7 @@ class DynamicForagingTaskBase(gym.Env):
             self.generate_new_trial()
 
         return self._get_obs(), reward, terminated, False, self._get_info()
-    
+
     def generate_reward(self, action):
         """Compute reward, could be overridden by subclasses for more complex reward structures"""
         # TODO: add baiting here
@@ -103,13 +103,13 @@ class DynamicForagingTaskBase(gym.Env):
         if not ignored and self.rng.uniform(0, 1) < self.trial_p_reward[self.trial, action]:
             reward = 1
         return reward
-    
+
     def generate_new_trial(self):
         """Generate p_reward for a new trial
         Note that self.trial already increased by 1 here
         """
         raise NotImplementedError("generate_next_trial() should be overridden by subclasses")
-    
+
     def get_choice_history(self):
         """Return the history of actions in format that is compatible with other library such as
         aind_dynamic_foraging_basic_analysis
@@ -118,13 +118,13 @@ class DynamicForagingTaskBase(gym.Env):
         if self.allow_ignore:
             actions[actions == self.action_space.n - 1] = np.nan
         return actions
-    
+
     def get_reward_history(self):
         """Return the history of rewards in format that is compatible with other library such as
         aind_dynamic_foraging_basic_analysis
         """
         return self.rewards
-    
+
     def get_p_reward(self):
         """Return the reward probabilities for each arm in each trial which is compatible with
         other library such as aind_dynamic_foraging_basic_analysis

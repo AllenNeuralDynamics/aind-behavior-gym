@@ -1,3 +1,3 @@
 """Task module"""
 
-from .base import DynamicForagingTaskBase, L, R, IGNORE
+from .base import IGNORE, DynamicForagingTaskBase, L, R  # noqa: F401

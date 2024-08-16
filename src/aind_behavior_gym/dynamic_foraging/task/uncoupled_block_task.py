@@ -9,9 +9,7 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 
-from aind_behavior_gym.dynamic_foraging.task import (
-    DynamicForagingTaskBase, L, R, IGNORE
-)
+from aind_behavior_gym.dynamic_foraging.task import IGNORE, DynamicForagingTaskBase, L, R
 
 logger = logging.getLogger(__name__)
 
@@ -57,14 +55,14 @@ class UncoupledBlockTask(DynamicForagingTaskBase):
     ) -> None:
         """Init"""
         super().__init__(**kwargs)
-        
+
         self.rwd_prob_array = rwd_prob_array
         self.block_min = block_min
         self.block_max = block_max
         self.persev_add = persev_add
         self.perseverative_limit = perseverative_limit
         self.max_block_tally = max_block_tally
-        
+
         self.block_stagger = int((round(block_max - block_min - 0.5) / 2 + block_min) / 2)
 
     def reset(self, seed=None):
@@ -93,7 +91,7 @@ class UncoupledBlockTask(DynamicForagingTaskBase):
     def generate_new_trial(self):
         """Generate a new trial. Overwrite the base class method."""
         msg = ""
-        
+
         if self.trial == 0:
             self.generate_first_block()
 
@@ -115,8 +113,8 @@ class UncoupledBlockTask(DynamicForagingTaskBase):
 
         # Fill new value
         self.trial_p_reward[self.trial, :] = [
-            self.block_rwd_prob[L][self.block_ind[L]], 
-            self.block_rwd_prob[R][self.block_ind[R]]
+            self.block_rwd_prob[L][self.block_ind[L]],
+            self.block_rwd_prob[R][self.block_ind[R]],
         ]
 
         # Anti-persev
@@ -131,7 +129,8 @@ class UncoupledBlockTask(DynamicForagingTaskBase):
 
         return (
             [
-                self.trial_p_reward[self.trial - 1, s] != self.trial_p_reward[self.trial, s] for s in [L, R]
+                self.trial_p_reward[self.trial - 1, s] != self.trial_p_reward[self.trial, s]
+                for s in [L, R]
             ]  # Whether block just switched
             if self.trial > 0
             else [0, 0]
@@ -290,9 +289,7 @@ class UncoupledBlockTask(DynamicForagingTaskBase):
             )
 
         for s, col in zip([L, R], ["r", "b"]):
-            ax[0].plot(
-                self.trial_p_reward[:, s], col, marker=".", alpha=0.5, lw=2
-            )
+            ax[0].plot(self.trial_p_reward[:, s], col, marker=".", alpha=0.5, lw=2)
         annotate_block(ax[0])
 
         ax[1].plot(

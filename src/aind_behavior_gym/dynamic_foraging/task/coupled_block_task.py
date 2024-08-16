@@ -12,7 +12,7 @@ from aind_behavior_gym.dynamic_foraging.task import DynamicForagingTaskBase, L, 
 
 class CoupledBlockTask(DynamicForagingTaskBase):
     """Coupled block task for dynamic foraging
-    
+
     This default setting roughly matches what has been used in this paper:
     https://www.sciencedirect.com/science/article/pii/S089662731930529X
     """
@@ -21,7 +21,7 @@ class CoupledBlockTask(DynamicForagingTaskBase):
         self,
         block_min: int = 40,  # Min block length
         block_max: int = 80,  # Max block length
-        block_beta: int = 20,  # Time constant of the exponential distribution (the larger the flatter)
+        block_beta: int = 20,  # Time constant of exponential distribution (the larger the flatter)
         p_reward_pairs: list[list[float]] = None,  # List of reward probability pairs
         **kwargs,
     ):
@@ -53,8 +53,7 @@ class CoupledBlockTask(DynamicForagingTaskBase):
         return super().reset()
 
     def generate_new_trial(self):
-        """Override the base class method to generate the next trial for coupled block task.
-        """
+        """Override the base class method to generate the next trial for coupled block task."""
         # Start a new block if necessary
         if self.trial == self.block_starts[-1]:
             self._next_block()

@@ -2,11 +2,13 @@
 
 import unittest
 
-import numpy as np
-
-from aind_behavior_gym.dynamic_foraging.task.uncoupled_block_task import (
-    UncoupledBlockTask, L, R, IGNORE)
 from aind_behavior_gym.dynamic_foraging.agent.random_agent import RandomAgentBiasedIgnore
+from aind_behavior_gym.dynamic_foraging.task.uncoupled_block_task import (
+    IGNORE,
+    L,
+    R,
+    UncoupledBlockTask,
+)
 
 
 class TestUncoupledTask(unittest.TestCase):

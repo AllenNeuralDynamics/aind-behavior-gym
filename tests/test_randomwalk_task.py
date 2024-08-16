@@ -5,8 +5,8 @@ import unittest
 
 import numpy as np
 
-from aind_behavior_gym.dynamic_foraging.task.random_walk_task import RandomWalkTask, L
 from aind_behavior_gym.dynamic_foraging.agent.random_agent import RandomAgent
+from aind_behavior_gym.dynamic_foraging.task.random_walk_task import RandomWalkTask
 
 
 class TestRandomWalkTask(unittest.TestCase):
@@ -55,8 +55,9 @@ class TestRandomWalkTask(unittest.TestCase):
         )
         np.testing.assert_array_equal(
             self.task.get_reward_history()[-10:],
-            np.array([1., 0., 0., 1., 0., 1., 0., 1., 0., 1.])
+            np.array([1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0]),
         )
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

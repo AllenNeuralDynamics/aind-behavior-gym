@@ -5,6 +5,8 @@ First coded by Han for the project in Neuromatch Academy: Deep Learning
 https://github.com/hanhou/meta_rl/blob/bd9b5b1d6eb93d217563ff37608aaa2f572c08e6/han/environment/dynamic_bandit_env.py
 """
 
+from typing import List
+
 import numpy as np
 
 from aind_behavior_gym.dynamic_foraging.task import DynamicForagingTaskBase, L, R
@@ -22,7 +24,7 @@ class CoupledBlockTask(DynamicForagingTaskBase):
         block_min: int = 40,  # Min block length
         block_max: int = 80,  # Max block length
         block_beta: int = 20,  # Time constant of exponential distribution (the larger the flatter)
-        p_reward_pairs: list[list[float]] = None,  # List of reward probability pairs
+        p_reward_pairs: List[List[float]] = None,  # List of reward probability pairs
         **kwargs,
     ):
         """Init"""

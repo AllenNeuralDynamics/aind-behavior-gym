@@ -127,7 +127,7 @@ class TestUncoupledTask(unittest.TestCase):
 
         # Verify rewards
         self.assertEqual(
-            self.task.rewards[-25:].tolist(),
+            self.task.reward[-25:].tolist(),
             [
                 0.0,
                 1.0,
@@ -156,7 +156,7 @@ class TestUncoupledTask(unittest.TestCase):
                 0.0,
             ],
         )
-        self.assertEqual(self.task.rewards[self.task.actions == IGNORE].sum(), 0)
+        self.assertEqual(self.task.reward[self.task.action == IGNORE].sum(), 0)
 
 
 if __name__ == "__main__":

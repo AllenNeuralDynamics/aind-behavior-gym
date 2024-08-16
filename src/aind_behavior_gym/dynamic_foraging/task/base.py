@@ -25,7 +25,7 @@ class DynamicForagingTaskBase(gym.Env):
 
     def __init__(
         self,
-        reward_baited: bool = False,  # Whether the reward is baited
+        reward_baiting: bool = False,  # Whether the reward is baited
         allow_ignore: bool = False,  # Allow the agent to ignore the task
         num_arms: int = 2,  # Number of arms in the bandit
         num_trials: int = 1000,  # Number of trials in the session
@@ -33,7 +33,7 @@ class DynamicForagingTaskBase(gym.Env):
     ):
         """Init"""
         self.num_trials = num_trials
-        self.reward_baited = reward_baited
+        self.reward_baiting = reward_baiting
         self.num_arms = num_arms
         self.allow_ignore = allow_ignore
 
@@ -63,8 +63,15 @@ class DynamicForagingTaskBase(gym.Env):
         # Some mandatory initialization for any dynamic foraging task
         self.trial = 0
         self.trial_p_reward = np.empty((self.num_trials, self.num_arms))
-        self.actions = np.empty(self.num_trials, dtype=int)
-        self.rewards = np.empty(self.num_trials)
+        self.reward_assigned_before_action = np.zeros_like(
+            self.trial_p_reward
+        )  # Whether the reward exists in a certain trial before action
+        self.reward_assigned_after_action = np.zeros_like(
+            self.trial_p_reward
+        )  # Whether the reward exists in a certain trial after action
+        
+        self.action = np.empty(self.num_trials, dtype=int)
+        self.reward = np.empty(self.num_trials)
 
         self.generate_new_trial()  # Generate a new p_reward for the first trial
 
@@ -76,13 +83,13 @@ class DynamicForagingTaskBase(gym.Env):
         Should return: (observation, reward, terminated, truncated, info)
         If terminated or truncated is true, the user needs to call reset().
         """
-        # Action should be type integer in [0, k_bandits-1]
+        # Action should be type integer in [0, num_arms-1] if not allow_ignore else [0, num_arms]
         assert self.action_space.contains(action)
-        self.actions[self.trial] = action
+        self.action[self.trial] = action
 
         # Generate reward
         reward = self.generate_reward(action)
-        self.rewards[self.trial] = reward
+        self.reward[self.trial] = reward
 
         # Decide termination before trial += 1
         terminated = bool((self.trial == self.num_trials - 1))  # self.trial starts from 0
@@ -96,13 +103,31 @@ class DynamicForagingTaskBase(gym.Env):
 
     def generate_reward(self, action):
         """Compute reward, could be overridden by subclasses for more complex reward structures"""
-        # TODO: add baiting here
-        reward = 0
-        ignored = self.allow_ignore and action == self.action_space.n - 1
 
-        if not ignored and self.rng.uniform(0, 1) < self.trial_p_reward[self.trial, action]:
-            reward = 1
-        return reward
+        # -- Refilling rewards on this trial --
+        reward_assigned = (
+            self.rng.uniform(0, 1, size=self.num_arms) < self.trial_p_reward[self.trial]
+        ).astype(float)
+
+        # -- Reward baited from the last trial --
+        if self.reward_baiting and self.trial > 0:
+            reward_assigned = np.logical_or(
+                reward_assigned,
+                self.reward_assigned_after_action[self.trial - 1]
+            ).astype(float)
+            
+        # Cache the reward assignment
+        self.reward_assigned_before_action[self.trial] = reward_assigned
+        self.reward_assigned_after_action[self.trial] = reward_assigned
+            
+        # -- Reward delivery --
+        if action == IGNORE:
+            # Note that reward may be still refilled even if the agent ignores the trial
+            return 0
+
+        # Clear up the reward_assigned_after_action slot and return the reward
+        self.reward_assigned_after_action[self.trial, action] = 0
+        return reward_assigned[action]
 
     def generate_new_trial(self):
         """Generate p_reward for a new trial
@@ -114,16 +139,15 @@ class DynamicForagingTaskBase(gym.Env):
         """Return the history of actions in format that is compatible with other library such as
         aind_dynamic_foraging_basic_analysis
         """
-        actions = self.actions.astype(float)
-        if self.allow_ignore:
-            actions[actions == self.action_space.n - 1] = np.nan
+        actions = self.action.astype(float)
+        actions[actions == IGNORE] = np.nan
         return actions
 
     def get_reward_history(self):
         """Return the history of rewards in format that is compatible with other library such as
         aind_dynamic_foraging_basic_analysis
         """
-        return self.rewards
+        return self.reward
 
     def get_p_reward(self):
         """Return the reward probabilities for each arm in each trial which is compatible with
@@ -144,5 +168,5 @@ class DynamicForagingTaskBase(gym.Env):
         """
         return {
             "trial": self.trial,
-            "task_object": self,
+            "task_object": self, # Return the whole task object for debugging
         }

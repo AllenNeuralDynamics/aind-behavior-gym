@@ -239,7 +239,7 @@ class UncoupledBlockTask(DynamicForagingTaskBase):
         """
         msg = ""
         for s in [L, R]:
-            if self.actions[self.trial - 1] == s:  # Note that self.trial already increased 1
+            if self.action[self.trial - 1] == s:  # Note that self.trial already increased 1
                 self.persev_consec_on_min_prob[1 - s] = (
                     0  # Reset other side as soon as there is an opposite choice
                 )
@@ -277,7 +277,7 @@ class UncoupledBlockTask(DynamicForagingTaskBase):
             for s, col, pos, m in zip(
                 [L, R, IGNORE], ["r", "b", "k"], [0, 1, 0.95], ["|", "|", "x"]
             ):
-                this_choice = np.where(self.actions == s)
+                this_choice = np.where(self.action == s)
                 ax.plot(this_choice, [pos] * len(this_choice), m, color=col)
 
             ax.plot(

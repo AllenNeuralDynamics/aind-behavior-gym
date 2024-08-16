@@ -69,7 +69,10 @@ class DynamicForagingTaskBase(gym.Env):
         self.reward_assigned_after_action = np.zeros_like(
             self.trial_p_reward
         )  # Whether the reward exists in a certain trial after action
-        
+        self.random_numbers = np.empty_like(
+            self.trial_p_reward
+        )  # Cache the generated random numbers
+
         self.action = np.empty(self.num_trials, dtype=int)
         self.reward = np.empty(self.num_trials)
 
@@ -105,8 +108,9 @@ class DynamicForagingTaskBase(gym.Env):
         """Compute reward, could be overridden by subclasses for more complex reward structures"""
 
         # -- Refilling rewards on this trial --
+        self.random_numbers[self.trial] = self.rng.uniform(0, 1, size=self.num_arms)
         reward_assigned = (
-            self.rng.uniform(0, 1, size=self.num_arms) < self.trial_p_reward[self.trial]
+            self.random_numbers[self.trial] < self.trial_p_reward[self.trial]
         ).astype(float)
 
         # -- Reward baited from the last trial --
@@ -115,11 +119,11 @@ class DynamicForagingTaskBase(gym.Env):
                 reward_assigned,
                 self.reward_assigned_after_action[self.trial - 1]
             ).astype(float)
-            
+
         # Cache the reward assignment
         self.reward_assigned_before_action[self.trial] = reward_assigned
         self.reward_assigned_after_action[self.trial] = reward_assigned
-            
+
         # -- Reward delivery --
         if action == IGNORE:
             # Note that reward may be still refilled even if the agent ignores the trial

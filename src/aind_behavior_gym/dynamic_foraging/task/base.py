@@ -106,6 +106,7 @@ class DynamicForagingTaskBase(gym.Env):
     
     def generate_new_trial(self):
         """Generate p_reward for a new trial
+        Note that self.trial already increased by 1 here
         """
         raise NotImplementedError("generate_next_trial() should be overridden by subclasses")
     

@@ -7,7 +7,7 @@ import numpy as np
 
 from aind_behavior_gym.dynamic_foraging.task.random_walk_task import RandomWalkTask
 from aind_behavior_gym.dynamic_foraging.agent.random_agent import RandomAgent
-from aind_behavior_gym.gym_env.dynamic_bandit_env import L
+from aind_behavior_gym.dynamic_foraging.task.base import L
 
 
 class TestRandomWalkTask(unittest.TestCase):

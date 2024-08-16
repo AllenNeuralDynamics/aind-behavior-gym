@@ -42,7 +42,7 @@ class CoupledBlockTask(DynamicForagingTaskBase):
         self.p_reward_pairs = [sorted(ps) for ps in p_reward_pairs]  # Always sort the input ps
 
     def reset(self):
-        """Reset the task with seed."""
+        """Reset the task"""
 
         # Add more initialization specific to this task
         self.block_starts = [0]  # Start of each block. The first block always starts at trial 0
@@ -60,6 +60,7 @@ class CoupledBlockTask(DynamicForagingTaskBase):
             self._next_block()
 
         # Append the current block's reward probability
+        # Note that self.trial already increased by 1 here
         self.trial_p_reward[self.trial, :] = self.block_p_reward[-1]
         return self.trial_p_reward[-1, :]
 

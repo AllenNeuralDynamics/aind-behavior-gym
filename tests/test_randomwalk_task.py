@@ -5,7 +5,8 @@ import unittest
 
 import numpy as np
 
-from aind_behavior_gym.task.random_walk_task import RandomWalkTask
+from aind_behavior_gym.dynamic_foraging.task.random_walk_task import RandomWalkTask
+from aind_behavior_gym.dynamic_foraging.agent.random_agent import RandomAgent
 from aind_behavior_gym.gym_env.dynamic_bandit_env import L
 
 
@@ -14,50 +15,48 @@ class TestRandomWalkTask(unittest.TestCase):
 
     def setUp(self):
         """Set up the environment and task"""
-        self.total_trial = 1000
-        self.reward_schedule = RandomWalkTask(
+        self.task = RandomWalkTask(
             p_min=[0.1, 0.1],  # The lower bound of p_L and p_R
             p_max=[0.9, 0.9],  # The upper bound
             sigma=[0.1, 0.1],  # The mean of each step of the random walk
             mean=[0, 0],  # The mean of each step of the random walk
+            num_trials=1000,
+            allow_ignore=False,
+            seed=42,
         )
-        self.reward_schedule.reset(seed=42)  # Already includes a next_trial()
+        self.agent = RandomAgent(task=self.task, seed=42)
 
-    def test_reward_schedule(self):
+    def test_random_walk_task(self):
         """Test the reward schedule"""
-        while self.reward_schedule.trial < self.total_trial:
-            # Replace this with the actual choice
-            choice = L  # Irrelevant for random walk
-
-            # Add choice
-            self.reward_schedule.add_action(choice)
-
-            # Next trial
-            self.reward_schedule.next_trial()
+        # Agent performs the task
+        self.agent.perform()
 
         # Call plot function and check it runs without error
-        fig = self.reward_schedule.plot_reward_schedule()
+        fig = self.task.plot_reward_schedule()
         fig.savefig("tests/results/test_random_walk_task.png")
         self.assertIsNotNone(fig)  # Ensure the figure is created
 
         np.testing.assert_array_almost_equal(
-            np.array(self.reward_schedule.trial_p_reward)[:10, :],
+            self.task.trial_p_reward[:10, :],
             np.array(
                 [
                     [0.71916484, 0.45110275],
-                    [0.79420996, 0.54515922],
-                    [0.59910644, 0.41494127],
-                    [0.61189048, 0.38331701],
-                    [0.61021036, 0.29801262],
-                    [0.69815016, 0.37579181],
-                    [0.70475323, 0.48851594],
-                    [0.75150417, 0.40258669],
-                    [0.78837924, 0.30669843],
-                    [0.87622427, 0.30170584],
+                    [0.81322131, 0.25599923],
+                    [0.82600535, 0.22437497],
+                    [0.74070096, 0.31231477],
+                    [0.74730403, 0.42503889],
+                    [0.66137478, 0.46191397],
+                    [0.74921981, 0.45692138],
+                    [0.68112686, 0.57917551],
+                    [0.63829407, 0.54396216],
+                    [0.67483848, 0.58523542],
                 ]
             ),
         )
-
+        np.testing.assert_array_equal(
+            self.task.get_reward_history()[-10:],
+            np.array([1., 0., 0., 1., 0., 1., 0., 1., 0., 1.])
+        )
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

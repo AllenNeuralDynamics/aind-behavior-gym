@@ -4,11 +4,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from aind_behavior_gym.task.base import DynamicBanditTask
-from aind_behavior_gym.gym_env.dynamic_bandit_env import L, R
+from aind_behavior_gym.dynamic_foraging.task.base import DynamicForagingTaskBase, L, R
 
 
-class RandomWalkTask(DynamicBanditTask):
+class RandomWalkTask(DynamicForagingTaskBase):
     """
     Generate reward schedule with random walk
 
@@ -21,10 +20,11 @@ class RandomWalkTask(DynamicBanditTask):
         p_max=[1, 1],  # The upper bound
         sigma=[0.15, 0.15],  # The mean of each step of the random walk
         mean=[0, 0],  # The mean of each step of the random walk
+        **kwargs,
     ) -> None:
         """Init"""
+        super().__init__(**kwargs)
 
-        self.__dict__.update(locals())
         if not isinstance(sigma, list):
             sigma = [sigma, sigma]  # Backward compatibility
 
@@ -37,32 +37,31 @@ class RandomWalkTask(DynamicBanditTask):
         self.p_min, self.p_max, self.sigma, self.mean = p_min, p_max, sigma, mean
 
     def reset(self, seed=None):
-        """Reset the task with seed. Overwrite the base class method."""
-        super().reset(seed=seed)
-
+        """Reset the task, remember to call the base class reset at the end."""
         self.hold_this_block = False
+        
+        return super().reset()
 
-        # Mandatory for reset()
-        self.trial_p_reward = []  # Rwd prob per trial
-        self.trial = -1  # Index of trial number, starting from 0
-        self.next_trial()
-
-        return self.trial_p_reward[0][L], self.trial_p_reward[0][R]
-
-    def next_trial(self):
+    def generate_new_trial(self):
         """Generate a new trial. Overwrite the base class method."""
-        self.trial += 1
-        self.trial_p_reward.append([self._generate_next_p(side) for side in [L, R]])
+        # Note that self.trial already increased by 1 here
+        self.trial_p_reward[self.trial, :] = [self._generate_next_p(side) 
+                                              for side in [L, R]
+                                              ]
 
     def _generate_next_p(self, side):
         """Generate the p_side for the next trial."""
         if self.trial == 0:
+            # Start with uniform distribution
             return self.rng.uniform(self.p_min[side], self.p_max[side])
         if self.hold_this_block:
-            return self.trial_p_reward[-1][side]
+            return self.trial_p_reward[self.trial - 1, side]
 
         # Else, take a random walk
-        p = self.rng.normal(self.trial_p_reward[-1][side] + self.mean[side], self.sigma[side])
+        p = self.rng.normal(
+            self.trial_p_reward[self.trial - 1, side] + self.mean[side], 
+            self.sigma[side]
+            )
         p = min(self.p_max[side], max(self.p_min[side], p))  # Absorb at the boundary
         return p
 

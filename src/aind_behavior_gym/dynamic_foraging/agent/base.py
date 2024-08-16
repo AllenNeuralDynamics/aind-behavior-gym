@@ -51,6 +51,9 @@ class AgentBase:
         """
         Updates the agent's knowledge or policy based on the last action and its outcome.
         
+        This is the core method that should be implemented by all non-trivial agents.
+        It could be Q-learning, policy gradients, neural networks, etc.
+        
         Args:
             observation: The observation before the action was taken.
             action: The action taken by the agent.

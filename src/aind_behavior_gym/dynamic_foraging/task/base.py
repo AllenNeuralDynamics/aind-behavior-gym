@@ -11,8 +11,6 @@ import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
 
-from aind_behavior_gym.task.base import DynamicBanditTask
-
 L = 0
 R = 1
 IGNORE = 2

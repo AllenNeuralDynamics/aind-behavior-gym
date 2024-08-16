@@ -24,7 +24,7 @@ class TestRandomWalkTask(unittest.TestCase):
             seed=42,
         )
         self.agent = RandomAgent(seed=42)
-        self.agent.add_task(self.task)
+        self.agent.set_task(self.task)
 
     def test_random_walk_task(self):
         """Test the reward schedule"""

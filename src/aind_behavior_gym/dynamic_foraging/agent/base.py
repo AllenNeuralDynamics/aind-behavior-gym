@@ -11,24 +11,36 @@ class AgentBase:
 
     def __init__(
         self,
-        task: DynamicForagingTaskBase,
+        task: DynamicForagingTaskBase = None,
         seed=None,
     ):
-        """Init"""
-        self.task = task
-        self.n_actions = task.action_space.n
-        self.allow_ignore = task.allow_ignore
+        """Init the agent
         
+        If a task is provided, the agent will be initialized with that task.
+        Otherwise, the user must call `add_task(task)` before the agent can perform any actions.
+        """
         self.rng = np.random.default_rng(seed)
+        self.task = None
+        if task is not None:
+            self.add_task(task)
 
     def reset(self):
         """Resets the agent's internal state. Override this if your agent has an internal state."""
         pass
+    
+    def add_task(self, task: DynamicForagingTaskBase):
+        """Add a task to the agent."""
+        self.task = task
+        self.n_actions = task.action_space.n
 
     def perform(self):
-        """Perform one session (eposide) of the task while learning.
+        """Perform one session (eposide) of the dynamic foraging task while learning.
         """
-        observation, info = self.task.reset()
+        assert self.task is not None, \
+            "The agent must have a task to perform. Run `add_task(task)` first."
+
+        # --- Main task loop ---
+        observation, info = self.task.reset()  # Get the initial observation
         done = False
         while not done:
             action = self.act(observation)

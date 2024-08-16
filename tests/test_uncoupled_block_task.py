@@ -28,7 +28,8 @@ class TestUncoupledTask(unittest.TestCase):
             num_trials=1000,
             seed=42,
         )
-        self.agent = RandomAgentBiasedIgnore(task=self.task, seed=42)
+        self.agent = RandomAgentBiasedIgnore(seed=42)
+        self.agent.add_task(self.task)
 
     def test_uncoupled_block_task(self):
         """Test the UncoupledBlockTask with a random agent"""

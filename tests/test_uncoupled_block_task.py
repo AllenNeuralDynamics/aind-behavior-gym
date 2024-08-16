@@ -4,9 +4,9 @@ import unittest
 
 import numpy as np
 
-from aind_behavior_gym.dynamic_foraging.task.uncoupled_block_task import UncoupledBlockTask
+from aind_behavior_gym.dynamic_foraging.task.uncoupled_block_task import (
+    UncoupledBlockTask, L, R, IGNORE)
 from aind_behavior_gym.dynamic_foraging.agent.random_agent import RandomAgentBiasedIgnore
-from aind_behavior_gym.dynamic_foraging.task.base import L, R, IGNORE
 
 
 class TestUncoupledTask(unittest.TestCase):

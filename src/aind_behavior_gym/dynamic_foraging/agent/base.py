@@ -4,7 +4,7 @@
 import gymnasium as gym
 import numpy as np
 
-from aind_behavior_gym.dynamic_foraging.task.base import DynamicForagingTaskBase
+from aind_behavior_gym.dynamic_foraging.task import DynamicForagingTaskBase
 
 class AgentBase:
     """Generic agent class for dynamic foraging"""

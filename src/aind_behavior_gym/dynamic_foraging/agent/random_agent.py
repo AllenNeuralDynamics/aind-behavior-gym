@@ -1,8 +1,8 @@
 """A Random agent
 """
 
-from aind_behavior_gym.dynamic_foraging.agent.base import AgentBase
-from aind_behavior_gym.dynamic_foraging.task.base import L, R, IGNORE
+from aind_behavior_gym.dynamic_foraging.agent import AgentBase
+from aind_behavior_gym.dynamic_foraging.task import L, R, IGNORE
 
 class RandomAgent(AgentBase):
     """A Random agent

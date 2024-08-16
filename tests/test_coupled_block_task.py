@@ -3,8 +3,8 @@
 import unittest
 import numpy as np
 
-from aind_behavior_gym.dynamic_foraging.task.coupled_block_task import CoupledBlockTask
-from aind_behavior_gym.dynamic_foraging.task.base import L, R
+from aind_behavior_gym.dynamic_foraging.task.coupled_block_task import (
+    CoupledBlockTask, L, R)
 from aind_behavior_gym.dynamic_foraging.agent.random_agent import RandomAgent
 
 from aind_dynamic_foraging_basic_analysis import plot_foraging_session

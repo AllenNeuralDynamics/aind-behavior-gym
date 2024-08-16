@@ -9,7 +9,7 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 
-from aind_behavior_gym.dynamic_foraging.task.base import (
+from aind_behavior_gym.dynamic_foraging.task import (
     DynamicForagingTaskBase, L, R, IGNORE
 )
 

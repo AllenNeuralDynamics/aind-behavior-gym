@@ -7,7 +7,7 @@ https://github.com/hanhou/meta_rl/blob/bd9b5b1d6eb93d217563ff37608aaa2f572c08e6/
 
 import numpy as np
 
-from aind_behavior_gym.dynamic_foraging.task.base import DynamicForagingTaskBase, L, R
+from aind_behavior_gym.dynamic_foraging.task import DynamicForagingTaskBase, L, R
 
 
 class CoupledBlockTask(DynamicForagingTaskBase):

@@ -94,6 +94,10 @@ class DynamicForagingTaskBase(gym.Env):
         reward = self.generate_reward(action)
         self.reward[self.trial] = reward
 
+        # Generate observation and info before self.trial += 1
+        observation = self._get_obs()
+        info = self._get_info()
+
         # Decide termination before trial += 1
         terminated = bool((self.trial == self.num_trials - 1))  # self.trial starts from 0
 
@@ -102,7 +106,7 @@ class DynamicForagingTaskBase(gym.Env):
             self.trial += 1  # tick time here
             self.generate_new_trial()
 
-        return self._get_obs(), reward, terminated, False, self._get_info()
+        return observation, reward, terminated, False, info
 
     def generate_reward(self, action):
         """Compute reward, could be overridden by subclasses for more complex reward structures"""

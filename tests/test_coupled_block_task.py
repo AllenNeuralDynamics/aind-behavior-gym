@@ -10,11 +10,11 @@ from aind_behavior_gym.dynamic_foraging.task.coupled_block_task import CoupledBl
 
 
 class TestCoupledBlockTask(unittest.TestCase):
-    """Test the CoupledBlockTask with a random agent"""
+    """Test the CoupledBlockTask with baiting using a random agent"""
 
     def setUp(self):
         """Set up the environment and task"""
-        self.task = CoupledBlockTask(allow_ignore=False, seed=42)
+        self.task = CoupledBlockTask(allow_ignore=False, reward_baiting=True, seed=42)
         self.agent = RandomAgent(task=self.task, seed=42)
 
     def test_coupled_block_task(self):
@@ -31,6 +31,7 @@ class TestCoupledBlockTask(unittest.TestCase):
         fig.savefig("tests/results/test_coupled_block_task.png")
         self.assertIsNotNone(fig)  # Ensure the figure is created
 
+        # -- Assertions --
         # Make sure block transitions are correct
         self.assertEqual(
             self.task.block_starts[:-1],
@@ -38,39 +39,29 @@ class TestCoupledBlockTask(unittest.TestCase):
                 0
             ].tolist(),
         )
+
+        # Check reward assignment
+        np.testing.assert_array_equal(
+            np.logical_or(
+                np.logical_and(self.task.reward_baiting, self.task.reward_assigned_after_action[:-1]),
+                self.task.random_numbers[1:] < self.task.trial_p_reward[1:],
+            ),
+            self.task.reward_assigned_before_action[1:],
+        )
+
         self.assertEqual(
             self.task.block_starts,
-            [
-                0,
-                80,
-                122,
-                181,
-                222,
-                270,
-                320,
-                386,
-                466,
-                529,
-                575,
-                630,
-                689,
-                732,
-                812,
-                857,
-                909,
-                989,
-                1034,
-            ],
+            [0, 80, 125, 185, 265, 311, 391, 437, 486, 545, 606, 686, 766, 830, 872, 951, 994, 1045],
         )
         np.testing.assert_array_equal(
             self.task.get_choice_history()[-10:],
-            np.array([0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0]),
+            np.array([0., 1., 0., 0., 1., 1., 1., 0., 1., 1.]),
         )
         np.testing.assert_array_equal(
             self.task.get_reward_history()[-10:],
-            np.array([1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0]),
+            np.array([0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0]),
         )
-        np.testing.assert_array_equal(
+        np.testing.assert_almost_equal(
             self.task.get_p_reward()[:, -10:],
             np.array(
                 [
@@ -79,24 +70,24 @@ class TestCoupledBlockTask(unittest.TestCase):
                         0.3375,
                         0.3375,
                         0.3375,
-                        0.3375,
-                        0.3375,
-                        0.3375,
-                        0.3375,
-                        0.3375,
-                        0.3375,
+                        0.06428571,
+                        0.06428571,
+                        0.06428571,
+                        0.06428571,
+                        0.06428571,
+                        0.06428571,
                     ],
                     [
                         0.1125,
                         0.1125,
                         0.1125,
                         0.1125,
-                        0.1125,
-                        0.1125,
-                        0.1125,
-                        0.1125,
-                        0.1125,
-                        0.1125,
+                        0.38571429,
+                        0.38571429,
+                        0.38571429,
+                        0.38571429,
+                        0.38571429,
+                        0.38571429,
                     ],
                 ]
             ),

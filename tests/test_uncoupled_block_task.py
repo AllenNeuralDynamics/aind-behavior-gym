@@ -2,6 +2,8 @@
 
 import unittest
 
+import numpy as np
+
 from aind_behavior_gym.dynamic_foraging.agent.random_agent import RandomAgentBiasedIgnore
 from aind_behavior_gym.dynamic_foraging.task.uncoupled_block_task import (
     IGNORE,
@@ -31,7 +33,7 @@ class TestUncoupledTask(unittest.TestCase):
             seed=42,
         )
         self.agent = RandomAgentBiasedIgnore(seed=42)
-        self.agent.add_task(self.task)
+        self.agent.set_task(self.task)
 
     def test_uncoupled_block_task(self):
         """Test the UncoupledBlockTask with a random agent"""
@@ -44,44 +46,54 @@ class TestUncoupledTask(unittest.TestCase):
         fig.savefig("tests/results/test_uncoupled_block_task.png")
         self.assertIsNotNone(fig)  # Ensure the figure is created
 
+        # Check reward assignment
+        np.testing.assert_array_equal(
+            np.logical_or(
+                np.logical_and(
+                    self.task.reward_baiting, self.task.reward_assigned_after_action[:-1]
+                ),
+                self.task.random_numbers[1:] < self.task.trial_p_reward[1:],
+            ),
+            self.task.reward_assigned_before_action[1:],
+        )
+
         # Assertions to verify the behavior of block ends
         self.assertEqual(
             self.task.block_ends[L],
             [
                 21,
-                52,
-                76,
-                102,
-                183,
-                214,
-                321,
-                349,
-                378,
-                398,
-                418,
-                450,
-                476,
-                502,
-                527,
-                564,
-                601,
-                622,
-                653,
-                676,
-                698,
-                725,
-                751,
-                773,
-                780,
-                813,
-                836,
-                865,
-                900,
-                904,
-                928,
-                969,
-                989,
-                1007,
+                47,
+                104,
+                126,
+                144,
+                173,
+                201,
+                235,
+                262,
+                285,
+                319,
+                340,
+                364,
+                396,
+                424,
+                454,
+                486,
+                516,
+                547,
+                589,
+                609,
+                688,
+                721,
+                753,
+                786,
+                844,
+                864,
+                868,
+                896,
+                967,
+                987,
+                990,
+                1011,
             ],
         )
 
@@ -89,74 +101,70 @@ class TestUncoupledTask(unittest.TestCase):
             self.task.block_ends[R],
             [
                 17,
-                21,
-                62,
-                92,
-                183,
-                191,
-                224,
-                331,
-                366,
-                398,
-                418,
-                458,
-                476,
-                520,
-                527,
-                570,
-                597,
-                618,
-                622,
-                669,
-                693,
-                698,
-                743,
-                773,
-                796,
-                831,
-                851,
-                875,
-                904,
-                918,
-                946,
-                975,
-                989,
-                1022,
+                44,
+                94,
+                144,
+                164,
+                192,
+                201,
+                254,
+                282,
+                302,
+                323,
+                340,
+                380,
+                396,
+                432,
+                454,
+                504,
+                538,
+                589,
+                601,
+                695,
+                721,
+                752,
+                777,
+                833,
+                868,
+                880,
+                947,
+                990,
+                1011,
             ],
         )
 
         # Verify rewards
         self.assertEqual(
-            self.task.rewards[-25:].tolist(),
+            self.task.reward[-25:].tolist(),
             [
                 0.0,
-                1.0,
-                1.0,
-                1.0,
-                1.0,
                 0.0,
-                0.0,
+                1.0,
                 1.0,
                 0.0,
                 0.0,
-                0.0,
-                0.0,
                 1.0,
-                0.0,
+                1.0,
+                1.0,
                 0.0,
                 0.0,
                 1.0,
                 0.0,
                 0.0,
                 0.0,
-                0.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
                 0.0,
                 0.0,
                 1.0,
-                0.0,
             ],
         )
-        self.assertEqual(self.task.rewards[self.task.actions == IGNORE].sum(), 0)
+        self.assertEqual(self.task.reward[self.task.action == IGNORE].sum(), 0)
 
 
 if __name__ == "__main__":

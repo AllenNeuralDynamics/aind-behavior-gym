@@ -1,11 +1,11 @@
 """A Random agent
 """
 
-from aind_behavior_gym.dynamic_foraging.agent import AgentBase
+from aind_behavior_gym.dynamic_foraging.agent import DynamicForagingAgentBase
 from aind_behavior_gym.dynamic_foraging.task import IGNORE, L, R
 
 
-class RandomAgent(AgentBase):
+class RandomAgent(DynamicForagingAgentBase):
     """A Random agent"""
 
     def act(self, observation):

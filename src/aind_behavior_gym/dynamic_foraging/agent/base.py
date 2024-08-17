@@ -6,12 +6,11 @@ import numpy as np
 from aind_behavior_gym.dynamic_foraging.task import DynamicForagingTaskBase
 
 
-class AgentBase:
+class DynamicForagingAgentBase:
     """Generic agent class for dynamic foraging"""
 
     def __init__(
         self,
-        task: DynamicForagingTaskBase = None,
         seed=None,
     ):
         """Init the agent
@@ -20,32 +19,25 @@ class AgentBase:
         Otherwise, the user must call `set_task(task)` before the agent can perform any actions.
         """
         self.rng = np.random.default_rng(seed)
-        self.task = None
-        if task is not None:
-            self.set_task(task)
 
     def reset(self):
         """Resets the agent's internal state. Override this if your agent has an internal state."""
         pass
 
-    def set_task(self, task: DynamicForagingTaskBase):
-        """Add a task to the agent."""
+    def perform(
+        self,
+        task: DynamicForagingTaskBase,
+    ):
+        """Perform one session (eposide) of the dynamic foraging task while learning."""
         self.task = task
         self.n_actions = task.action_space.n
-
-    def perform(self):
-        """Perform one session (eposide) of the dynamic foraging task while learning."""
-        assert self.task is not None, (
-            "The agent must have a task to perform. Run `set_task(task)` first or "
-            "initialize the agent with a task kwarg."
-        )
 
         # --- Main task loop ---
         observation, info = self.task.reset()  # Get the initial observation
         done = False
         while not done:
             action = self.act(observation)
-            observation, reward, done, truncated, info = self.task.step(action)
+            observation, reward, done, truncated, info = task.step(action)
             self.learn(observation, action, reward, observation, done)
 
     def act(self, observation):
@@ -75,6 +67,15 @@ class AgentBase:
             done: Whether the episode has ended.
         """
         raise NotImplementedError("The 'learn' method should be overridden by subclasses.")
+
+    def fit(self, data):
+        """
+        Fit the parameters of the agent to data.
+
+        Args:
+            data: Either from animal data (model fitting) or simulated data (model recovery)
+        """
+        raise NotImplementedError("The 'fit' method should be overridden in order to fit data.")
 
     def save(self, filepath):
         """

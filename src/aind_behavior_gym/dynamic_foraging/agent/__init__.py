@@ -1,3 +1,3 @@
 """Agent module"""
 
-from .base import AgentBase  # noqa: F401
+from .base import DynamicForagingAgentBase  # noqa: F401

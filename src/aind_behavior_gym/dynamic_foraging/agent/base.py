@@ -6,7 +6,7 @@ import numpy as np
 from aind_behavior_gym.dynamic_foraging.task import DynamicForagingTaskBase
 
 
-class AgentBase:
+class DynamicForagingAgentBase:
     """Generic agent class for dynamic foraging"""
 
     def __init__(

@@ -68,6 +68,15 @@ class DynamicForagingAgentBase:
         """
         raise NotImplementedError("The 'learn' method should be overridden by subclasses.")
 
+    def fit(self, data):
+        """
+        Fit the parameters of the agent to data.
+
+        Args:
+            data: Either from animal data (model fitting) or simulated data (model recovery)
+        """
+        raise NotImplementedError("The 'fit' method should be overridden in order to fit data.")
+
     def save(self, filepath):
         """
         Saves the agent's current state or learned parameters to a file.

@@ -4,7 +4,7 @@
 ![Code Style](https://img.shields.io/badge/code%20style-black-black)
 [![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 ![Interrogate](https://img.shields.io/badge/interrogate-100.0%25-brightgreen)
-![Coverage](https://img.shields.io/badge/coverage-97%25-brightgreen?logo=codecov)
+![Coverage](https://img.shields.io/badge/coverage-96%25-brightgreen?logo=codecov)
 ![Python](https://img.shields.io/badge/python->=3.7-blue?logo=python)
 
 Implementing AIND behavior _**tasks**_ using [gymnasium](https://gymnasium.farama.org/index.html) and setting up base class for _**agents**_ that perform the tasks.

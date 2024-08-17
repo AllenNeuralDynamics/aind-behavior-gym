@@ -15,12 +15,12 @@ class TestCoupledBlockTask(unittest.TestCase):
     def setUp(self):
         """Set up the environment and task"""
         self.task = CoupledBlockTask(allow_ignore=False, reward_baiting=True, seed=42)
-        self.agent = RandomAgent(task=self.task, seed=42)
+        self.agent = RandomAgent(seed=42)
 
     def test_coupled_block_task(self):
         """Test the CoupledBlockTask with a random agent"""
         # Agent performs the task
-        self.agent.perform()
+        self.agent.perform(task=self.task)
 
         # Call plot function and check it runs without error
         fig, _ = plot_foraging_session(

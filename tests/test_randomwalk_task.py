@@ -24,12 +24,11 @@ class TestRandomWalkTask(unittest.TestCase):
             seed=42,
         )
         self.agent = RandomAgent(seed=42)
-        self.agent.set_task(self.task)
 
     def test_random_walk_task(self):
         """Test the reward schedule"""
         # Agent performs the task
-        self.agent.perform()
+        self.agent.perform(task=self.task)
 
         # Call plot function and check it runs without error
         fig = self.task.plot_reward_schedule()

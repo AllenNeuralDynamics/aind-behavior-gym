@@ -116,8 +116,7 @@ class DynamicForagingTaskBase(gym.Env):
         # -- Reward baited from the last trial --
         if self.reward_baiting and self.trial > 0:
             reward_assigned = np.logical_or(
-                reward_assigned,
-                self.reward_assigned_after_action[self.trial - 1]
+                reward_assigned, self.reward_assigned_after_action[self.trial - 1]
             ).astype(float)
 
         # Cache the reward assignment
@@ -172,5 +171,5 @@ class DynamicForagingTaskBase(gym.Env):
         """
         return {
             "trial": self.trial,
-            "task_object": self, # Return the whole task object for debugging
+            "task_object": self,  # Return the whole task object for debugging
         }

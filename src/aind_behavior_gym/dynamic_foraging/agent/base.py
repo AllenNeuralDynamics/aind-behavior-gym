@@ -35,10 +35,10 @@ class AgentBase:
 
     def perform(self):
         """Perform one session (eposide) of the dynamic foraging task while learning."""
-        assert (
-            self.task is not None
-        ), "The agent must have a task to perform. Run `set_task(task)` first or "\
-           "initialize the agent with a task kwarg."
+        assert self.task is not None, (
+            "The agent must have a task to perform. Run `set_task(task)` first or "
+            "initialize the agent with a task kwarg."
+        )
 
         # --- Main task loop ---
         observation, info = self.task.reset()  # Get the initial observation

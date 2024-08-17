@@ -43,7 +43,9 @@ class TestCoupledBlockTask(unittest.TestCase):
         # Check reward assignment
         np.testing.assert_array_equal(
             np.logical_or(
-                np.logical_and(self.task.reward_baiting, self.task.reward_assigned_after_action[:-1]),
+                np.logical_and(
+                    self.task.reward_baiting, self.task.reward_assigned_after_action[:-1]
+                ),
                 self.task.random_numbers[1:] < self.task.trial_p_reward[1:],
             ),
             self.task.reward_assigned_before_action[1:],
@@ -51,11 +53,30 @@ class TestCoupledBlockTask(unittest.TestCase):
 
         self.assertEqual(
             self.task.block_starts,
-            [0, 80, 125, 185, 265, 311, 391, 437, 486, 545, 606, 686, 766, 830, 872, 951, 994, 1045],
+            [
+                0,
+                80,
+                125,
+                185,
+                265,
+                311,
+                391,
+                437,
+                486,
+                545,
+                606,
+                686,
+                766,
+                830,
+                872,
+                951,
+                994,
+                1045,
+            ],
         )
         np.testing.assert_array_equal(
             self.task.get_choice_history()[-10:],
-            np.array([0., 1., 0., 0., 1., 1., 1., 0., 1., 1.]),
+            np.array([0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0]),
         )
         np.testing.assert_array_equal(
             self.task.get_reward_history()[-10:],

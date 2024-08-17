@@ -1,6 +1,7 @@
 """Test the dynamic bandit environment with a random agent performing an uncoupled block task"""
 
 import unittest
+
 import numpy as np
 
 from aind_behavior_gym.dynamic_foraging.agent.random_agent import RandomAgentBiasedIgnore

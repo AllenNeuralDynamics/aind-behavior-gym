@@ -7,13 +7,19 @@
 ![Coverage](https://img.shields.io/badge/coverage-97%25-brightgreen?logo=codecov)
 ![Python](https://img.shields.io/badge/python->=3.7-blue?logo=python)
 
-Implementation of AIND behavior tasks using [gymnasium](https://gymnasium.farama.org/index.html).
+Implementing AIND behavior _**tasks**_ using [gymnasium](https://gymnasium.farama.org/index.html) and setting up base class for _**agents**_ that perform the tasks.
 
-![image](https://github.com/user-attachments/assets/5e81fc93-0726-4bc0-b1b8-ca8800fa6fa6)
+## What is this library for?
+It aims to provide a common language among behavior-related animal training, artificial agent training, model fitting, and model simulation in AIND.
 
-For the dynamic foraging tasks, the implementation is divided into two parts:
-- `task`: block structure that generates reward contingencies (`state`). The same class is used in animal training.
-- `env`: queries reward contingencies from `task` and delivers reward to the `agent`. This is like the foraging GUI in animal training.
+![image](https://github.com/user-attachments/assets/34a413f8-408e-4b05-92ad-a00beef0a917)
+
+## Structure
+
+For now, three dynamic foraging tasks have been implemented.
+
+![image](classes_aind-behavior-gym.png)
+
 
 ## Usage
  - To use this template, click the green `Use this template` button and `Create new repository`.

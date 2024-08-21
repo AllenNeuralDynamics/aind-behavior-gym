@@ -37,8 +37,9 @@ class DynamicForagingAgentBase:
         done = False
         while not done:
             action = self.act(observation)
-            observation, reward, done, truncated, info = task.step(action)
-            self.learn(observation, action, reward, observation, done)
+            next_observation, reward, done, truncated, info = task.step(action)
+            self.learn(observation, action, reward, next_observation, done)
+            observation = next_observation
 
     def act(self, observation):
         """

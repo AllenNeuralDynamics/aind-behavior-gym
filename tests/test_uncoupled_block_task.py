@@ -41,7 +41,7 @@ class TestUncoupledTask(unittest.TestCase):
 
         # --- Assertions ---
         # Call plot function
-        fig = self.task.plot_reward_schedule()
+        fig, _ = self.task.plot_reward_schedule()
         fig.savefig("tests/results/test_uncoupled_block_task.png")
         self.assertIsNotNone(fig)  # Ensure the figure is created
 

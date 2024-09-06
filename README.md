@@ -12,6 +12,9 @@ Implementing AIND behavior _**tasks**_ using [gymnasium](https://gymnasium.faram
 ## What is this library for?
 It aims to provide a common language among behavior-related animal training, artificial agent training, model fitting, and model simulation in AIND.
 
+See related repos:
+- [aind-dynamic-foraging-models](https://github.com/AllenNeuralDynamics/aind-dynamic-foraging-models)
+
 <img width="1668" alt="image" src="https://github.com/user-attachments/assets/8a5bfc68-e592-4dee-8fc9-b00b2e0a39ab">
 
 ## Structure

@@ -9,6 +9,8 @@
 
 Implementing AIND behavior _**tasks**_ using [gymnasium](https://gymnasium.farama.org/index.html) and setting up base class for _**agents**_ that perform the tasks.
 
+User documentation available on [readthedocs](https://aind-behavior-gym.readthedocs.io/).
+
 ## What is this library for?
 It aims to provide a common language among behavior-related animal training, artificial agent training, model fitting, and model simulation in AIND.
 

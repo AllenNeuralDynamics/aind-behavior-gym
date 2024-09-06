@@ -271,8 +271,23 @@ class UncoupledBlockTask(DynamicForagingTaskBase):
                     ax.axvline(x + (0.1 if s == R else 0), 0, 1, color=col, ls="--", lw=0.5)
                     for x in self.block_ends[s]
                 ]
-                [ax.plot(x, 1.2, marker=">", color=col) for x in self.force_by_tally[s]]
-                [ax.plot(x, 1.1, marker="v", color=col) for x in self.force_by_both_lowest[s]]
+
+                ax.plot(
+                    self.force_by_tally[s],
+                    [1.2] * len(self.force_by_tally[s]),
+                    marker=">",
+                    ls="",
+                    color=col,
+                    label="forced by tally",
+                )
+                ax.plot(
+                    self.force_by_both_lowest[s],
+                    [1.1] * len(self.force_by_both_lowest[s]),
+                    marker="v",
+                    ls="",
+                    color=col,
+                    label="forced by both lowest",
+                )
 
             for s, col, pos, m in zip(
                 [L, R, IGNORE], ["r", "b", "k"], [0, 1, 0.95], ["|", "|", "x"]
@@ -284,6 +299,7 @@ class UncoupledBlockTask(DynamicForagingTaskBase):
                 self.persev_add_at_trials,
                 [1.05] * len(self.persev_add_at_trials),
                 marker="+",
+                label=f"anti-persev added {self.perseverative_limit} trials",
                 ls="",
                 color="c",
             )
@@ -303,4 +319,4 @@ class UncoupledBlockTask(DynamicForagingTaskBase):
         ax[1].legend()
         annotate_block(ax[1])
 
-        return fig
+        return fig, ax

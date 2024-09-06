@@ -271,21 +271,21 @@ class UncoupledBlockTask(DynamicForagingTaskBase):
                     ax.axvline(x + (0.1 if s == R else 0), 0, 1, color=col, ls="--", lw=0.5)
                     for x in self.block_ends[s]
                 ]
-                
+
                 ax.plot(
-                    self.force_by_tally[s], 
-                    [1.2] * len(self.force_by_tally[s]), 
+                    self.force_by_tally[s],
+                    [1.2] * len(self.force_by_tally[s]),
                     marker=">",
                     ls="",
-                    color=col, 
-                    label="forced by tally"
+                    color=col,
+                    label="forced by tally",
                 )
                 ax.plot(
-                    self.force_by_both_lowest[s], 
-                    [1.1] * len(self.force_by_both_lowest[s]), 
-                    marker="v", 
+                    self.force_by_both_lowest[s],
+                    [1.1] * len(self.force_by_both_lowest[s]),
+                    marker="v",
                     ls="",
-                    color=col, 
+                    color=col,
                     label="forced by both lowest",
                 )
 

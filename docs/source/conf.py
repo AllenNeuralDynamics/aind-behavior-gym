@@ -56,6 +56,4 @@ html_show_copyright = False
 
 # --- Substitutions ----------------------------------------------------------
 rst_epilog = ""
-rst_epilog += (
-    ".. |classes_aind-behavior-gym| image:: ../../classes_aind_behavior_gym.svg\n"
-)
+rst_epilog += ".. |classes_aind-behavior-gym| image:: ../../classes_aind_behavior_gym.svg\n"

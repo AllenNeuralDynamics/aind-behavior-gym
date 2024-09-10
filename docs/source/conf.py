@@ -32,6 +32,7 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
 ]
 templates_path = ["_templates"]
 exclude_patterns = []
@@ -52,6 +53,10 @@ html_show_sphinx = False
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
 html_show_copyright = False
+
+# Show sourcelink
+html_show_sourcelink = True
+html_sourcelink_suffix = ''
 
 
 # --- Substitutions ----------------------------------------------------------

@@ -19,7 +19,8 @@ See related repos:
 - MetaRL-agents [(aind-behavior-meta-RL)](https://github.com/AllenNeuralDynamics/aind-behavior-meta-RL)
 - Animal training [(dynamic-foraging-task)](https://github.com/AllenNeuralDynamics/dynamic-foraging-task)
 
-<img width="1668" alt="image" src="https://github.com/user-attachments/assets/8a5bfc68-e592-4dee-8fc9-b00b2e0a39ab">
+![image](https://github.com/user-attachments/assets/cc17372f-3591-424b-b962-7f41790c1ac5)
+
 
 ## Structure
 

@@ -15,7 +15,9 @@ User documentation available on [readthedocs](https://aind-behavior-gym.readthed
 It aims to provide a common language among behavior-related animal training, artificial agent training, model fitting, and model simulation in AIND.
 
 See related repos:
-- [aind-dynamic-foraging-models](https://github.com/AllenNeuralDynamics/aind-dynamic-foraging-models)
+- Model fitting and simulation [(aind-dynamic-foraging-models)](https://github.com/AllenNeuralDynamics/aind-dynamic-foraging-models)
+- MetaRL-agents [(aind-behavior-meta-RL)](https://github.com/AllenNeuralDynamics/aind-behavior-meta-RL)
+- Animal training [(dynamic-foraging-task)](https://github.com/AllenNeuralDynamics/dynamic-foraging-task)
 
 <img width="1668" alt="image" src="https://github.com/user-attachments/assets/8a5bfc68-e592-4dee-8fc9-b00b2e0a39ab">
 

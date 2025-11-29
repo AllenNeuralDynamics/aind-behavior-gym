@@ -33,6 +33,9 @@ class RandomWalkTask(DynamicForagingTaskBase):
 
         if not isinstance(p_max, list):
             p_max = [p_max, p_max]  # Backward compatibility
+            
+        if not isinstance(mean, list):
+            mean = [mean, mean]  # Backward compatibility
 
         self.p_min, self.p_max, self.sigma, self.mean = p_min, p_max, sigma, mean
 

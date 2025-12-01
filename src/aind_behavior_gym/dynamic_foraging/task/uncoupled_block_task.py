@@ -190,7 +190,7 @@ class UncoupledBlockTask(DynamicForagingTaskBase):
                         f"--- {self.trial}: {side} is higher for {self.rwd_tally[side]} "
                         f"eff_blocks, force {side} to lowest ---\n"
                     )
-                    logger.info(msg)
+                    logger.debug(msg)
                     self.block_rwd_prob[side].append(min(self.rwd_prob_array))
                     self.rwd_tally[side] = self.rwd_tally[other_side] = 0
                     self.force_by_tally[side].append(self.trial)
@@ -215,7 +215,7 @@ class UncoupledBlockTask(DynamicForagingTaskBase):
 
                 # Force block switch of the other side
                 msg += f"--- {self.trial}: both side is the lowest, push {side} to higher ---"
-                logger.info(msg)
+                logger.debug(msg)
                 self.force_by_both_lowest[side].append(self.trial)
                 self.block_ends[other_side][-1] = self.trial
                 self.block_ind[
@@ -256,7 +256,7 @@ class UncoupledBlockTask(DynamicForagingTaskBase):
                     ] += self.perseverative_limit  # Add 'perseverative_limit' trials to both blocks
                     self.persev_consec_on_min_prob[ss] = 0
                 msg = f"persev at side = {s}, added {self.perseverative_limit} trials to both sides"
-                logger.info(msg)
+                logger.debug(msg)
                 self.persev_add_at_trials.append(self.trial)
         return msg
 
